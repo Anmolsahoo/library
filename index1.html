@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LibraryOS — Admin Console</title>
+<style>
+  :root{
+    --blue-900:#1e2a5e;
+    --blue-700:#2a3d8f;
+    --blue-600:#3454d1;
+    --blue-500:#4f6ef7;
+    --accent:#4f6ef7;
+    --green:#16a34a;
+    --green-bg:#dcfce7;
+    --red:#dc2626;
+    --red-bg:#fee2e2;
+    --amber:#f59e0b;
+    --amber-bg:#fef3c7;
+    --teal:#14b8a6;
+    --purple:#8b5cf6;
+    --bg:#f3f4f8;
+    --card:#ffffff;
+    --border:#e6e8f0;
+    --text-900:#131a2e;
+    --text-600:#5b6172;
+    --text-400:#9aa0b4;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 1px 2px rgba(20,25,50,.04), 0 8px 24px rgba(20,25,50,.04);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Segoe UI',ui-sans-serif,system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text-900);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* ---------- LAYOUT ---------- */
+  .app{
+    display:grid;
+    grid-template-columns:260px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    background:#fff;
+    border-right:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    padding:20px 16px;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:6px 8px 20px 8px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:16px;
+  }
+  .brand-mark{
+    width:38px;height:38px;border-radius:11px;
+    background:linear-gradient(135deg,#4f6ef7,#1e2a5e);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:18px;
+    flex-shrink:0;
+  }
+  .brand-name{font-weight:700;font-size:16px;line-height:1.2;}
+  .brand-name span{color:var(--blue-600);}
+  .brand-sub{font-size:12px;color:var(--text-400);}
+
+  .nav-group{margin-bottom:6px;}
+  .nav-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.06em;
+    color:var(--text-400);
+    padding:14px 12px 6px;
+    text-transform:uppercase;
+  }
+  .nav-item{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:14.5px;
+    color:var(--text-600);
+    font-weight:500;
+    margin:2px 0;
+    transition:background .15s,color .15s;
+  }
+  .nav-item:hover{background:#f2f4fb;color:var(--text-900);}
+  .nav-item.active{
+    background:linear-gradient(90deg,#eef1ff,#f4f6ff);
+    color:var(--blue-600);
+    font-weight:600;
+  }
+  .nav-item .ic{
+    width:18px;height:18px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sidebar-footer{
+    margin-top:auto;
+    background:#f7f8fc;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .storage-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px;}
+  .storage-bar{height:6px;background:#e6e8f0;border-radius:4px;overflow:hidden;margin-bottom:6px;}
+  .storage-fill{height:100%;width:64%;background:var(--blue-600);border-radius:4px;}
+  .storage-label{font-size:11.5px;color:var(--text-400);}
+
+  /* ---------- MAIN ---------- */
+  .main{display:flex;flex-direction:column;min-height:100vh;}
+
+  .topbar{
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    padding:16px 32px;
+    display:flex;align-items:center;gap:20px;
+    position:sticky;top:0;z-index:5;
+  }
+  .search-box{
+    flex:1;max-width:520px;
+    display:flex;align-items:center;gap:10px;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 14px;
+    color:var(--text-400);
+  }
+  .search-box input{
+    border:none;background:transparent;outline:none;
+    flex:1;font-size:14px;color:var(--text-900);
+  }
+  .kbd{
+    font-size:11px;color:var(--text-400);
+    background:#fff;border:1px solid var(--border);
+    border-radius:6px;padding:2px 6px;
+  }
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:22px;}
+  .clock{text-align:right;}
+  .clock .time{font-weight:700;font-size:14px;}
+  .clock .date{font-size:12px;color:var(--text-400);}
+  .icon-btn{
+    position:relative;width:38px;height:38px;border-radius:10px;
+    border:1px solid var(--border);background:#fff;
+    display:flex;align-items:center;justify-content:center;color:var(--text-600);
+  }
+  .icon-btn:hover{background:var(--bg);}
+  .dot{
+    position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;
+    background:var(--red);border:2px solid #fff;
+  }
+  .profile{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .avatar{
+    width:38px;height:38px;border-radius:10px;background:var(--blue-600);
+    color:#fff;font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .profile-name{font-size:13.5px;font-weight:700;line-height:1.2;}
+  .profile-role{font-size:11.5px;color:var(--text-400);}
+  .chev{color:var(--text-400);}
+
+  .content{padding:28px 32px;flex:1;}
+  .page{display:none;animation:fade .25s ease;}
+  .page.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .breadcrumb{font-size:13px;color:var(--text-400);margin-bottom:6px;}
+  .breadcrumb b{color:var(--blue-600);font-weight:600;}
+  .page-title{font-size:26px;font-weight:800;margin:0 0 4px;}
+  .page-sub{color:var(--text-600);font-size:14.5px;margin-bottom:22px;}
+
+  /* Hero */
+  .hero{
+    background:linear-gradient(120deg,#2a3d8f,#4f6ef7 60%,#6f8bff);
+    border-radius:var(--radius);
+    padding:32px 36px;
+    color:#fff;
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:24px;margin-bottom:24px;
+    position:relative;overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+    background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
+  }
+  .hero h1{font-size:26px;margin:0 0 8px;font-weight:800;}
+  .hero p{margin:0 0 18px;opacity:.9;font-size:14.5px;max-width:520px;}
+  .hero-stats{display:flex;gap:12px;flex-wrap:wrap;}
+  .hero-chip{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:12px;padding:10px 18px;
+    backdrop-filter:blur(4px);
+  }
+  .hero-chip .n{font-weight:800;font-size:16px;}
+  .hero-chip .l{font-size:12px;opacity:.85;}
+  .hero-cta{
+    background:#fff;color:var(--blue-700);
+    border:none;border-radius:10px;padding:12px 20px;
+    font-weight:700;font-size:14px;white-space:nowrap;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+  }
+
+  /* Stat grid */
+  .stat-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px;
+  }
+  .stat-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 22px;box-shadow:var(--shadow);
+  }
+  .stat-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;}
+  .badge{font-size:12px;font-weight:700;border-radius:8px;padding:4px 8px;}
+  .badge.up{color:var(--green);background:var(--green-bg);}
+  .badge.down{color:var(--red);background:var(--red-bg);}
+  .stat-value{font-size:26px;font-weight:800;}
+  .stat-label{color:var(--text-600);font-size:13.5px;margin-top:2px;margin-bottom:10px;}
+  .spark{width:100%;height:34px;display:block;}
+
+  /* Chart row */
+  .chart-row{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;}
+  .panel{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:22px 24px;box-shadow:var(--shadow);
+  }
+  .panel h3{margin:0;font-size:16px;font-weight:700;}
+  .panel .sub{color:var(--text-400);font-size:13px;margin:2px 0 14px;}
+  .legend{display:flex;gap:16px;font-size:12.5px;color:var(--text-600);margin-bottom:6px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .panel-head{display:flex;justify-content:space-between;align-items:flex-start;}
+
+  .donut-wrap{display:flex;align-items:center;gap:20px;}
+  .donut-legend{display:flex;flex-direction:column;gap:10px;font-size:13px;}
+  .donut-legend .row{display:flex;align-items:center;gap:8px;color:var(--text-600);}
+  .donut-legend i{width:9px;height:9px;border-radius:50%;}
+  .donut-legend b{color:var(--text-900);margin-left:auto;}
+
+  /* Forms */
+  .form-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow);}
+  .field-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px;}
+  .field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:7px;}
+  .field label .req{color:var(--red);}
+  .field input,.field select,.field textarea{
+    width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;
+    font-size:14px;color:var(--text-900);background:#fbfbfd;outline:none;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue-500);background:#fff;}
+  .field textarea{resize:vertical;min-height:90px;}
+  .seg{display:flex;gap:8px;}
+  .seg button{
+    flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;
+    background:#fff;font-size:13.5px;font-weight:600;color:var(--text-600);
+  }
+  .seg button.active{border-color:var(--blue-500);color:var(--blue-600);background:#eef1ff;}
+  .upload-box{
+    border:2px dashed var(--border);border-radius:12px;padding:26px;text-align:center;
+    color:var(--text-400);font-size:13px;margin:12px 0 18px;cursor:pointer;
+  }
+  .upload-box:hover{border-color:var(--blue-500);}
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--border);}
+  .toggle-row:first-of-type{border-top:none;}
+  .toggle-row b{font-size:13.5px;font-weight:600;}
+  .switch{position:relative;width:42px;height:24px;background:#e2e5ee;border-radius:20px;cursor:pointer;transition:.2s;}
+  .switch.on{background:var(--blue-600);}
+  .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .switch.on::after{left:21px;}
+  .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;}
+  .btn{padding:11px 20px;border-radius:10px;font-weight:700;font-size:13.5px;border:1px solid var(--border);background:#fff;}
+  .btn.primary{background:var(--blue-600);color:#fff;border:none;}
+
+  /* Table */
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;padding:14px 20px;background:#f7f8fc;color:var(--text-400);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
+  td{padding:14px 20px;border-top:1px solid var(--border);color:var(--text-900);}
+  tr:hover td{background:#fafbff;}
+  .pill{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+  .pill.active{background:var(--green-bg);color:var(--green);}
+  .pill.inactive{background:var(--red-bg);color:var(--red);}
+  .name-cell{display:flex;align-items:center;gap:10px;}
+  .mini-avatar{width:32px;height:32px;border-radius:8px;background:var(--blue-500);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .toolbar{display:flex;gap:12px;margin-bottom:18px;}
+  .toolbar input{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+  .toolbar select{padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+
+  /* Seat management */
+  .seat-stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+  .seat-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow);}
+  .seat-stat .n{font-size:26px;font-weight:800;}
+  .seat-stat .l{font-size:12.5px;color:var(--text-600);}
+  .filter-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:0;}
+  .filter-row{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
+  .filter-row input{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:10px;}
+  .filter-row select{padding:11px 14px;border:1px solid var(--border);border-radius:10px;}
+  .filter-row button{padding:11px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;font-weight:600;}
+  .legend-check{display:flex;gap:22px;font-size:13px;color:var(--text-600);margin-bottom:18px;}
+  .legend-check span{display:inline-flex;align-items:center;gap:7px;}
+  .legend-check i{width:11px;height:11px;border-radius:50%;}
+  .seat-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:12px;}
+  .seat{
+    aspect-ratio:1/0.85;border-radius:12px;border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+    font-size:15px;color:var(--text-600);background:#fff;position:relative;
+  }
+  .seat.active{background:var(--green-bg);color:#15803d;border-color:#bbf0cd;}
+  .seat.duesoon{background:var(--amber-bg);color:#b45309;border-color:#fde3ab;}
+  .seat.overdue{background:var(--red-bg);color:#b91c1c;border-color:#fbc7c7;}
+  .seat .dot2{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;}
+  .seat.active .dot2{background:#22c55e;}
+  .seat.duesoon .dot2{background:#f59e0b;}
+
+  /* Placeholder page */
+  .placeholder{
+    background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);
+    padding:60px 30px;text-align:center;color:var(--text-400);
+  }
+  .placeholder .ic{font-size:34px;margin-bottom:10px;}
+
+  @media (max-width:1100px){
+    .field-grid{grid-template-columns:repeat(2,1fr);}
+    .stat-grid{grid-template-columns:repeat(2,1fr);}
+    .chart-row{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .seat-grid{grid-template-columns:repeat(6,1fr);}
+  }
+  @media (max-width:760px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:fixed;left:-280px;top:0;width:260px;z-index:50;transition:left .2s;box-shadow:0 0 40px rgba(0,0,0,.15);}
+    .sidebar.open{left:0;}
+    .menu-toggle{display:flex;}
+    .field-grid{grid-template-columns:1fr;}
+    .stat-grid{grid-template-columns:1fr 1fr;}
+    .seat-grid{grid-template-columns:repeat(4,1fr);}
+    .seat-stat-row{grid-template-columns:repeat(2,1fr);}
+
+    .content{padding:16px;}
+    .topbar{padding:12px 16px;gap:10px;}
+    .search-box{padding:8px 10px;}
+    .search-box input{width:0;}
+    .kbd{display:none;}
+    .clock{display:none;}
+    .topbar-right{gap:8px;}
+    .icon-btn{width:34px;height:34px;}
+    .profile-name,.profile-role{display:none;}
+    .avatar{width:32px;height:32px;}
+
+    .hero{flex-direction:column;padding:22px;}
+    .hero-cta{width:100%;}
+    .hero h1{font-size:21px;}
+    .hero-stats{gap:8px;}
+    .hero-chip{padding:8px 12px;flex:1;min-width:100px;}
+
+    .stat-grid{gap:12px;}
+    .stat-card{padding:16px;}
+    .chart-row{gap:14px;}
+    .panel{padding:18px;overflow-x:auto;}
+    .donut-wrap{flex-direction:column;align-items:flex-start;}
+
+    .form-grid{gap:14px;}
+    .card{padding:18px;}
+
+    .table-wrap{overflow-x:auto;}
+    table{min-width:640px;}
+
+    .filter-row{flex-wrap:wrap;}
+    .filter-row input{min-width:100%;order:-1;}
+    .legend-check{flex-wrap:wrap;gap:10px 16px;}
+    .seat-grid{gap:8px;}
+
+    .toolbar{flex-wrap:wrap;}
+    .toolbar input{min-width:100%;}
+
+    .page-title{font-size:21px;}
+  }
+
+  @media (max-width:420px){
+    .seat-grid{grid-template-columns:repeat(3,1fr);}
+    .stat-grid{grid-template-columns:1fr;}
+    .seat-stat-row{grid-template-columns:1fr 1fr;}
+  }
+  .menu-toggle{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;align-items:center;justify-content:center;}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:40;}
+  .overlay.show{display:block;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-name">Library<span>OS</span></div>
+        <div class="brand-sub">Admin Console</div>
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Overview</div>
+      <a class="nav-item active" data-page="dashboard">
+        <span class="ic">▦</span> Dashboard
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Students</div>
+      <a class="nav-item" data-page="registration">
+        <span class="ic">👤+</span> Student Registration
+      </a>
+      <a class="nav-item" data-page="studentlist">
+        <span class="ic">☰</span> Student List
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">Seating</div>
+      <a class="nav-item" data-page="seating">
+        <span class="ic">▦</span> Seat Management
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">System</div>
+      <a class="nav-item" data-page="reports">
+        <span class="ic">📊</span> Reports
+      </a>
+      <a class="nav-item" data-page="settings">
+        <span class="ic">⚙</span> Settings
+      </a>
+      <a class="nav-item" data-page="logout" style="color:#dc2626;">
+        <span class="ic">⏻</span> Logout
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="storage-row"><span>Storage</span><span>6.4 / 10 GB</span></div>
+      <div class="storage-bar"><div class="storage-fill"></div></div>
+      <div class="storage-label">Book covers &amp; backups</div>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ===================== MAIN ===================== -->
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Search students, books, seats..." value="Anmol">
+        <span class="kbd">⌘K</span>
+      </div>
+      <div class="topbar-right">
+        <div class="clock">
+          <div class="time" id="clockTime">11:00:12 AM</div>
+          <div class="date" id="clockDate">Wed, Jul 8, 2026</div>
+        </div>
+        <button class="icon-btn">🌙</button>
+        <button class="icon-btn">✉️<span class="dot"></span></button>
+        <button class="icon-btn">🔔<span class="dot"></span></button>
+        <div class="profile">
+          <div class="avatar">AS</div>
+          <div>
+            <div class="profile-name">Anmol Sahoo</div>
+            <div class="profile-role">Chief Librarian</div>
+          </div>
+          <span class="chev">⌄</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ================= DASHBOARD PAGE ================= -->
+      <section class="page active" id="page-dashboard">
+        <div class="breadcrumb"><b>Overview</b> / Dashboard</div>
+
+        <div class="hero">
+          <div>
+            <h1>Good afternoon, Anmol 👋</h1>
+            <p>Here's what's happening across all 3 branches today. 42 books are due back within 48 hours.</p>
+            <div class="hero-stats">
+              <div class="hero-chip"><div class="n">23</div><div class="l">Today's checkouts</div></div>
+              <div class="hero-chip"><div class="n">3</div><div class="l">Active members</div></div>
+              <div class="hero-chip"><div class="n">₹215</div><div class="l">Fine collected</div></div>
+            </div>
+          </div>
+          <button class="hero-cta">+ Issue a book</button>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-top"><div class="stat-icon" style="background:var(--blue-600);">👥</div><span class="badge up">▲ 8.2%</span></div>
+            <div class="stat-value">1,284</div>
+            <div class="stat-label">Total students registered</div>
+            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#3454d1" stroke-width="2.5" points="0,28 25,24 50,30 75,18 100,22 125,10 150,16 175,6 200,10"/></svg>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top"><div class="stat-icon" style="background:var(--teal);">📗</div><span class="badge up">▲ 4.6%</span></div>
+            <div class="stat-value">6,532</div>
+            <div class="stat-label">Books in inventory</div>
+            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#14b8a6" stroke-width="2.5" points="0,24 25,26 50,20 75,24 100,14 125,18 150,8 175,14 200,8"/></svg>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top"><div class="stat-icon" style="background:var(--amber);">📖</div><span class="badge up">▲ 12.1%</span></div>
+            <div class="stat-value">847</div>
+            <div class="stat-label">Books currently issued</div>
+            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#f59e0b" stroke-width="2.5" points="0,20 25,22 50,18 75,24 100,16 125,20 150,14 175,20 200,16"/></svg>
+          </div>
+          <div class="stat-card">
+            <div class="stat-top"><div class="stat-icon" style="background:var(--red);">💲</div><span class="badge down">▼ 2.4%</span></div>
+            <div class="stat-value">₹18,400</div>
+            <div class="stat-label">Pending fine amount</div>
+            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="0,10 25,16 50,14 75,22 100,18 125,26 150,22 175,30 200,28"/></svg>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Circulation activity</h3>
+                <div class="sub">Books issued vs returned — last 7 days</div>
+              </div>
+              <div class="legend">
+                <span><i style="background:#3454d1;"></i>Issued</span>
+                <span><i style="background:#14b8a6;"></i>Returned</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 560 220" width="100%" height="220">
+              <!-- gridlines -->
+              <line x1="30" y1="10" x2="30" y2="190" stroke="#e6e8f0"/>
+              <line x1="30" y1="190" x2="540" y2="190" stroke="#e6e8f0"/>
+              <text x="0" y="14" font-size="11" fill="#9aa0b4">38</text>
+              <text x="0" y="74" font-size="11" fill="#9aa0b4">28</text>
+              <text x="0" y="134" font-size="11" fill="#9aa0b4">19</text>
+              <text x="0" y="190" font-size="11" fill="#9aa0b4">0</text>
+              <!-- bars: 7 days, issued+returned -->
+              <g id="circulation-bars"></g>
+            </svg>
+          </div>
+
+          <div class="panel">
+            <h3>Inventory by category</h3>
+            <div class="sub">Distribution</div>
+            <div class="donut-wrap">
+              <svg width="150" height="150" viewBox="0 0 42 42" id="donut-svg">
+                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#eee" stroke-width="6"></circle>
+              </svg>
+              <div class="donut-legend" id="donut-legend"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STUDENT REGISTRATION PAGE ================= -->
+      <section class="page" id="page-registration">
+        <div class="breadcrumb"><b>Students</b> / Student Registration</div>
+        <div class="page-title">Student Registration</div>
+        <div class="page-sub">Add a new student to the library membership system</div>
+
+        <div class="form-grid">
+          <div class="card">
+            <div class="field-grid">
+              <div class="field"><label>Student name <span class="req">*</span></label><input placeholder="e.g. Priya Sahoo"></div>
+              <div class="field"><label>Roll number <span class="req">*</span></label><input placeholder="e.g. CSE-2024-041"></div>
+              <div class="field"><label>Seat number</label><input placeholder="e.g. 25"></div>
+
+              <div class="field"><label>Registration number</label><input placeholder="e.g. REG-88213"></div>
+              <div class="field"><label>Aadhar number</label><input placeholder="12-digit Aadhar number"></div>
+              <div class="field"><label>Joining date</label><input type="text" placeholder="dd-mm-yyyy"></div>
+
+              <div class="field"><label>Monthly charge (₹)</label><input placeholder="e.g. 800"></div>
+              <div class="field"><label>Due date</label><input type="text" placeholder="dd-mm-yyyy"></div>
+              <div class="field">
+                <label>Gender</label>
+                <div class="seg">
+                  <button class="active">Male</button><button>Female</button><button>Other</button>
+                </div>
+              </div>
+
+              <div class="field"><label>Date of birth</label><input type="text" placeholder="dd-mm-yyyy"></div>
+              <div class="field"><label>Phone <span class="req">*</span></label><input placeholder="10-digit number"></div>
+              <div class="field"><label>Email</label><input placeholder="student@mail.com"></div>
+
+              <div class="field">
+                <label>Blood group</label>
+                <select><option>A+</option><option>B+</option><option>O+</option><option>AB+</option></select>
+              </div>
+              <div class="field"><label>Guardian name</label><input placeholder="Parent / guardian"></div>
+              <div class="field"><label>Guardian phone</label><input placeholder="10-digit number"></div>
+            </div>
+
+            <div class="field" style="margin-bottom:0;">
+              <label>Status</label>
+              <select style="max-width:220px;"><option>Active</option><option>Inactive</option></select>
+            </div>
+
+            <div class="field" style="margin-top:18px;">
+              <label>Address</label>
+              <textarea placeholder="Full residential address"></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn">Cancel</button>
+              <button class="btn primary" onclick="alert('Demo only — student registered!')">Register student</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin:0 0 4px;font-size:16px;">Student photo</h3>
+            <div style="color:var(--text-400);font-size:13px;margin-bottom:2px;">Upload a passport-size photo</div>
+            <div class="upload-box">
+              🖼<br>Click to upload or drag &amp; drop<br>PNG, JPG up to 2MB
+            </div>
+
+            <div class="toggle-row">
+              <b>Auto-generate ID card</b>
+              <div class="switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <b>Send welcome email</b>
+              <div class="switch on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <b>Enable library app access</b>
+              <div class="switch" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STUDENT LIST PAGE ================= -->
+      <section class="page" id="page-studentlist">
+        <div class="breadcrumb"><b>Students</b> / Student List</div>
+        <div class="page-title">Student List</div>
+        <div class="page-sub">1,284 students registered across all branches</div>
+
+        <div class="toolbar">
+          <input placeholder="Search by name, roll number or phone...">
+          <select><option>All branches</option><option>Main branch</option><option>North branch</option></select>
+          <select><option>All status</option><option>Active</option><option>Inactive</option></select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Student</th><th>Roll no.</th><th>Seat</th><th>Phone</th><th>Joined</th><th>Status</th></tr>
+            </thead>
+            <tbody id="student-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= SEAT MANAGEMENT PAGE ================= -->
+      <section class="page" id="page-seating">
+        <div class="breadcrumb"><b>Students</b> / <b style="color:var(--blue-600);">Seat Management</b></div>
+        <div class="page-title">Seat Management</div>
+        <div class="page-sub">100 seats — live occupancy &amp; fee status</div>
+
+        <div class="seat-stat-row">
+          <div class="seat-stat"><div class="n">100</div><div class="l">Total seats</div></div>
+          <div class="seat-stat"><div class="n">3</div><div class="l">Occupied</div></div>
+          <div class="seat-stat"><div class="n">97</div><div class="l">Empty</div></div>
+          <div class="seat-stat"><div class="n">1</div><div class="l">Due soon</div></div>
+          <div class="seat-stat"><div class="n">0</div><div class="l">Overdue</div></div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="filter-row">
+            <input placeholder="🔍  Search seat no., name or mobile">
+            <select><option>All seats</option><option>Empty</option><option>Active</option><option>Due soon</option><option>Overdue</option></select>
+            <button id="refreshSeats">⟳ Refresh</button>
+          </div>
+          <div class="legend-check">
+            <span><i style="background:#e9e2fb;border:1px solid #c9b8f5;"></i>Empty</span>
+            <span><i style="background:#22c55e;"></i>Active</span>
+            <span><i style="background:#f59e0b;"></i>Due soon (≤5 days)</span>
+            <span><i style="background:#dc2626;"></i>Overdue</span>
+          </div>
+          <div class="seat-grid" id="seat-grid"></div>
+        </div>
+      </section>
+
+      <!-- ================= REPORTS PAGE ================= -->
+      <section class="page" id="page-reports">
+        <div class="breadcrumb"><b>System</b> / Reports</div>
+        <div class="page-title">Reports</div>
+        <div class="page-sub">Generate and export library analytics</div>
+        <div class="placeholder">
+          <div class="ic">📊</div>
+          Reports module — dummy data view.<br>Monthly circulation, fine collection and inventory reports would appear here.
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS PAGE ================= -->
+      <section class="page" id="page-settings">
+        <div class="breadcrumb"><b>System</b> / Settings</div>
+        <div class="page-title">Settings</div>
+        <div class="page-sub">Manage your library preferences</div>
+        <div class="placeholder">
+          <div class="ic">⚙</div>
+          Settings module — dummy data view.<br>Branch info, fee rules and staff accounts would be managed here.
+        </div>
+      </section>
+
+      <!-- ================= LOGOUT "PAGE" ================= -->
+      <section class="page" id="page-logout">
+        <div class="placeholder" style="margin-top:60px;">
+          <div class="ic">⏻</div>
+          You have been logged out (demo).<br>
+          <button class="btn primary" style="margin-top:14px;" onclick="goPage('dashboard')">Back to Dashboard</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- NAVIGATION ---------------- */
+const navItems = document.querySelectorAll('.nav-item');
+const pages = document.querySelectorAll('.page');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+function goPage(name){
+  pages.forEach(p => p.classList.remove('active'));
+  navItems.forEach(n => n.classList.remove('active'));
+  const target = document.getElementById('page-' + name);
+  if(target) target.classList.add('active');
+  const navBtn = document.querySelector(`.nav-item[data-page="${name}"]`);
+  if(navBtn) navBtn.classList.add('active');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const page = item.getAttribute('data-page');
+    goPage(page);
+  });
+});
+
+document.getElementById('menuToggle').addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+});
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('show');
+});
+
+/* ---------------- LIVE CLOCK ---------------- */
+function updateClock(){
+  const now = new Date();
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12; if(h === 0) h = 12;
+  document.getElementById('clockTime').textContent = `${h}:${m}:${s} ${ampm}`;
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('clockDate').textContent =
+    `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ---------------- CIRCULATION BAR CHART ---------------- */
+const circulationData = [
+  {issued: 15, returned: 8},
+  {issued: 30, returned: 26},
+  {issued: 9, returned: 5},
+  {issued: 34, returned: 24},
+  {issued: 6, returned: 4},
+  {issued: 26, returned: 10},
+  {issued: 12, returned: 18},
+];
+(function drawBars(){
+  const g = document.getElementById('circulation-bars');
+  const max = 38;
+  const chartTop = 10, chartBottom = 190, chartHeight = chartBottom - chartTop;
+  const groupWidth = (540-30)/circulationData.length;
+  const barWidth = 16;
+  circulationData.forEach((d,i)=>{
+    const gx = 30 + i*groupWidth + groupWidth/2;
+    const issuedH = (d.issued/max)*chartHeight;
+    const returnedH = (d.returned/max)*chartHeight;
+    const b1 = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    b1.setAttribute('x', gx-barWidth-2);
+    b1.setAttribute('y', chartBottom-issuedH);
+    b1.setAttribute('width', barWidth);
+    b1.setAttribute('height', issuedH);
+    b1.setAttribute('rx', 4);
+    b1.setAttribute('fill', '#3454d1');
+    g.appendChild(b1);
+    const b2 = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    b2.setAttribute('x', gx+2);
+    b2.setAttribute('y', chartBottom-returnedH);
+    b2.setAttribute('width', barWidth);
+    b2.setAttribute('height', returnedH);
+    b2.setAttribute('rx', 4);
+    b2.setAttribute('fill', '#14b8a6');
+    g.appendChild(b2);
+  });
+})();
+
+/* ---------------- DONUT CHART ---------------- */
+const donutData = [
+  {label:'Fiction', value:32, color:'#3454d1'},
+  {label:'Academic', value:28, color:'#14b8a6'},
+  {label:'Reference', value:22, color:'#8b5cf6'},
+  {label:'Children', value:18, color:'#dc2626'},
+];
+(function drawDonut(){
+  const svg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  let offset = 0;
+  const circumference = 2 * Math.PI * 15.9;
+  donutData.forEach(d=>{
+    const dash = (d.value/100)*circumference;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',21); circle.setAttribute('cy',21); circle.setAttribute('r',15.9);
+    circle.setAttribute('fill','transparent');
+    circle.setAttribute('stroke', d.color);
+    circle.setAttribute('stroke-width', 6);
+    circle.setAttribute('stroke-dasharray', `${dash} ${circumference-dash}`);
+    circle.setAttribute('stroke-dashoffset', -offset);
+    circle.setAttribute('transform','rotate(-90 21 21)');
+    svg.appendChild(circle);
+    offset += dash;
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<i style="background:${d.color}"></i>${d.label}<b>${d.value}%</b>`;
+    legend.appendChild(row);
+  });
+})();
+
+/* ---------------- STUDENT LIST DUMMY DATA ---------------- */
+const students = [
+  {name:'Priya Sahoo', roll:'CSE-2024-041', seat:12, phone:'98xxxxxx21', joined:'12-Jan-2025', status:'Active'},
+  {name:'Rahul Nayak', roll:'ECE-2023-018', seat:45, phone:'91xxxxxx08', joined:'03-Aug-2024', status:'Active'},
+  {name:'Ananya Mishra', roll:'MEC-2024-067', seat:2, phone:'87xxxxxx55', joined:'19-Feb-2025', status:'Inactive'},
+  {name:'Debasish Behera', roll:'CSE-2022-091', seat:71, phone:'99xxxxxx14', joined:'27-Nov-2023', status:'Active'},
+  {name:'Sneha Patra', roll:'CIV-2024-033', seat:1, phone:'80xxxxxx77', joined:'05-May-2025', status:'Active'},
+  {name:'Aditya Rout', roll:'EEE-2023-050', seat:8, phone:'95xxxxxx63', joined:'22-Jul-2024', status:'Inactive'},
+  {name:'Ishika Jena', roll:'CSE-2024-102', seat:23, phone:'76xxxxxx40', joined:'10-Mar-2025', status:'Active'},
+];
+(function fillTable(){
+  const body = document.getElementById('student-table-body');
+  students.forEach(s=>{
+    const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div class="name-cell"><div class="mini-avatar">${initials}</div>${s.name}</div></td>
+      <td>${s.roll}</td>
+      <td>${s.seat}</td>
+      <td>${s.phone}</td>
+      <td>${s.joined}</td>
+      <td><span class="pill ${s.status.toLowerCase()}">${s.status}</span></td>
+    `;
+    body.appendChild(tr);
+  });
+})();
+
+/* ---------------- SEAT GRID (100 seats) ---------------- */
+function renderSeats(){
+  const grid = document.getElementById('seat-grid');
+  grid.innerHTML = '';
+  const activeSeats = [1,2];
+  const dueSoonSeats = [23];
+  for(let i=1;i<=100;i++){
+    const div = document.createElement('div');
+    let cls = 'seat';
+    let dot = '';
+    if(activeSeats.includes(i)){ cls += ' active'; dot = '<span class="dot2"></span>'; }
+    else if(dueSoonSeats.includes(i)){ cls += ' duesoon'; dot = '<span class="dot2"></span>'; }
+    div.className = cls;
+    div.innerHTML = String(i).padStart(2,'0') + dot;
+    grid.appendChild(div);
+  }
+}
+renderSeats();
+document.getElementById('refreshSeats').addEventListener('click', renderSeats);
+</script>
+</body>
+</html>
