@@ -696,6 +696,17 @@
     .section-title { font-size: 16px; }
     #header { padding: 8px 12px; }
     .header-title { font-size: 14px; }
+    #header {
+    flex-wrap: nowrap;      /* prevent the two rows from stacking */
+    justify-content: space-between;
+  }
+  .header-row-main {
+    flex: 1 1 auto;
+    min-width: 0;            /* allows title to truncate instead of pushing actions down */
+  }
+  .header-row-actions {
+    flex: 0 0 auto;           /* keep icons at fixed size, never wrap */
+  }
     .stat-value { font-size: 22px; }
     .donut-wrap { justify-content: center; }
     .bio-scanner { padding: 1.25rem; }
