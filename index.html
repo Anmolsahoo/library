@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -152,7 +152,7 @@
 
   /* ── HEADER ── */
   #header {
-    height: var(--header-h);
+    min-height: var(--header-h);
     background: var(--bg-card);
     border-bottom: 1px solid var(--border);
     display: flex;
@@ -163,7 +163,10 @@
     top: 0;
     z-index: 50;
   }
-  .header-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .header-row { display: flex; align-items: center; gap: 12px; }
+  .header-row-main { flex: 1; min-width: 0; }
+  .header-row-actions { flex-shrink: 0; gap: 8px; }
+  .header-title { font-size: 16px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .header-actions { display: flex; gap: 8px; align-items: center; }
   .btn {
     display: inline-flex;
@@ -709,18 +712,19 @@
     .hamburger-btn { display: flex; }
     .row { flex-direction: column; }
     .row .col { width: 100%; }
-    #header { padding: 0 14px; gap: 10px; }
-    .header-actions .form-control { display: none; }
+    #header { padding: 10px 14px; gap: 8px; }
+    .header-search { display: none; }
   }
   @media (max-width: 640px) {
     .grid-4, .grid-3, .grid-2 { grid-template-columns: repeat(2, 1fr); }
     #content { padding: 14px; }
     .card, .stat-card { padding: 14px; }
     .section-title { font-size: 16px; }
-    #header { height: auto; min-height: var(--header-h); flex-wrap: wrap; padding: 10px 14px; }
-    .header-title { width: 100%; order: 1; flex: none; font-size: 14px; }
-    .header-actions { width: 100%; order: 2; flex-wrap: wrap; }
-    .header-actions .btn span, .logout-btn span { display: none; }
+    #header { flex-wrap: wrap; padding: 10px 14px; }
+    .header-row { width: 100%; }
+    .header-row-actions { justify-content: flex-end; }
+    .header-title { font-size: 14px; }
+    .header-row-actions .btn span, .logout-btn span { display: none; }
     .stat-value { font-size: 22px; }
     .donut-wrap { justify-content: center; }
     .bio-scanner { padding: 1.25rem; }
@@ -923,19 +927,21 @@
 <div id="main">
   <!-- HEADER -->
   <header id="header">
-    <div class="hamburger-btn" onclick="toggleSidebar()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </div>
-    <div class="header-title" id="headerTitle">Dashboard</div>
-    <a href="{% url 'logout' %}" class="logout-btn">
-    <i class='bx bx-log-out'></i>
-    <span>Logout</span>
-</a>
-    <div class="header-actions">
-      <div style="position:relative;">
+    <div class="header-row header-row-main">
+      <div class="hamburger-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <div class="header-title" id="headerTitle">Dashboard</div>
+      <div class="header-search" style="position:relative;">
         <input class="form-control" placeholder="Search students, employees..." style="width:220px;padding-left:32px;font-size:13px;">
         <svg style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
+    </div>
+    <div class="header-row header-row-actions">
+      <a href="{% url 'logout' %}" class="logout-btn">
+        <i class='bx bx-log-out'></i>
+        <span>Logout</span>
+      </a>
       <button class="btn" onclick="sendAllAlert()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.61 3.47 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         <span>SMS Alert</span>
