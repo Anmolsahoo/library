@@ -3,906 +3,1878 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LibraryOS — Admin Console</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f6ef7'/%3E%3Ctext x='50' y='68' font-size='60' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<title>College Admin Panel</title>
 <style>
-  :root{
-    --blue-900:#1e2a5e;
-    --blue-700:#2a3d8f;
-    --blue-600:#3454d1;
-    --blue-500:#4f6ef7;
-    --accent:#4f6ef7;
-    --green:#16a34a;
-    --green-bg:#dcfce7;
-    --red:#dc2626;
-    --red-bg:#fee2e2;
-    --amber:#f59e0b;
-    --amber-bg:#fef3c7;
-    --teal:#14b8a6;
-    --purple:#8b5cf6;
-    --bg:#f3f4f8;
-    --card:#ffffff;
-    --border:#e6e8f0;
-    --text-900:#131a2e;
-    --text-600:#5b6172;
-    --text-400:#9aa0b4;
-    --radius:16px;
-    --radius-sm:10px;
-    --shadow:0 1px 2px rgba(20,25,50,.04), 0 8px 24px rgba(20,25,50,.04);
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    font-family:'Segoe UI',ui-sans-serif,system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text-900);
-    -webkit-font-smoothing:antialiased;
-  }
-  a{text-decoration:none;color:inherit;}
-  button{font-family:inherit;cursor:pointer;}
-
-  /* ---------- LAYOUT ---------- */
-  .app{
-    display:grid;
-    grid-template-columns:260px 1fr;
-    min-height:100vh;
+  :root {
+    --primary: #1a56db;
+    --primary-light: #e8f0fe;
+    --primary-dark: #1240a8;
+    --sidebar-bg: #0f172a;
+    --sidebar-text: #94a3b8;
+    --sidebar-active: #1a56db;
+    --sidebar-hover: #1e293b;
+    --bg: #f8fafc;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --info: #0891b2;
+    --info-bg: #cffafe;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --sidebar-w: 240px;
+    --header-h: 60px;
+    --purple: #7c3aed;
   }
 
-  /* ---------- SIDEBAR ---------- */
-  .sidebar{
-    background:#fff;
-    border-right:1px solid var(--border);
-    display:flex;
-    flex-direction:column;
-    padding:20px 16px;
-    position:sticky;
-    top:0;
-    height:100vh;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    min-height: 100vh;
+    display: flex;
   }
-  .brand{
-    display:flex;
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.25s;
+  }
+
+  .sidebar-brand {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #1e293b;
+  }
+  .sidebar-brand-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+  .sidebar-brand-sub {
+    font-size: 11px;
+    color: var(--sidebar-text);
+    margin-top: 2px;
+  }
+
+  .sidebar-nav { flex: 1; padding: 12px 0; }
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #475569;
+    padding: 12px 20px 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    color: var(--sidebar-text);
+    transition: all 0.15s;
+    font-size: 13.5px;
+    border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: var(--sidebar-hover); color: #e2e8f0; }
+  .nav-item.active {
+    background: #1e3a5f;
+    color: #fff;
+    border-left: 3px solid var(--primary);
+  }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .nav-badge.red { background: var(--danger); }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #1e293b;
+  }
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 13px; color: #e2e8f0; font-weight: 500; }
+  .user-role { font-size: 11px; color: var(--sidebar-text); }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    height: var(--header-h);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn-success { background: var(--success); color: #fff; border-color: var(--success); }
+  .btn svg { width: 14px; height: 14px; }
+
+  .notif-btn {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .notif-btn:hover { background: var(--bg); }
+  .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 7px; height: 7px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid var(--bg-card);
+  }
+
+  /* ── CONTENT ── */
+  #content { padding: 24px; flex: 1; }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── GRID ── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .card-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── STAT CARD ── */
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--text); margin: 6px 0 4px; letter-spacing: -0.5px; }
+  .stat-change {
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .stat-change.up { color: var(--success); }
+  .stat-change.down { color: var(--danger); }
+  .stat-icon {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: right;
+    margin-top: -4px;
+  }
+  .stat-icon.blue { background: #dbeafe; color: #1d4ed8; }
+  .stat-icon.green { background: var(--success-bg); color: var(--success); }
+  .stat-icon.amber { background: var(--warning-bg); color: var(--warning); }
+  .stat-icon.red { background: var(--danger-bg); color: var(--danger); }
+  .stat-icon.purple { background: #ede9fe; color: #7c3aed; }
+  .stat-icon.teal { background: #cffafe; color: #0891b2; }
+  .stat-icon svg { width: 20px; height: 20px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.success { background: var(--success-bg); color: var(--success); }
+  .badge.danger { background: var(--danger-bg); color: var(--danger); }
+  .badge.warning { background: var(--warning-bg); color: var(--warning); }
+  .badge.info { background: var(--info-bg); color: var(--info); }
+  .badge.gray { background: #f1f5f9; color: #64748b; }
+  .badge.purple { background: #ede9fe; color: #7c3aed; }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* ── FORM ── */
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; display: block; }
+  .form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--bg-card);
+    outline: none;
+    font-family: inherit;
+    transition: border 0.15s;
+  }
+  .form-control:focus { border-color: var(--primary); }
+  select.form-control { cursor: pointer; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px; top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 16px; }
+  .timeline-dot {
+    position: absolute;
+    left: -17px;
+    top: 2px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-card);
+  }
+  .timeline-dot.green { background: var(--success); }
+  .timeline-dot.red { background: var(--danger); }
+  .timeline-dot.blue { background: var(--primary); }
+  .timeline-dot.amber { background: var(--warning); }
+  .timeline-time { font-size: 11px; color: var(--text-muted); }
+  .timeline-text { font-size: 13px; color: var(--text); margin-top: 1px; }
+
+  /* ── ALERT ── */
+  .alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .alert.success { background: var(--success-bg); color: #166534; }
+  .alert.danger { background: var(--danger-bg); color: #991b1b; }
+  .alert.warning { background: var(--warning-bg); color: #92400e; }
+  .alert.info { background: var(--info-bg); color: #155e75; }
+  .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── DONUT CHART ── */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .donut-svg { width: 100px; height: 100px; transform: rotate(-90deg); }
+  .donut-legend { flex: 1; }
+  .donut-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12.5px; }
+  .donut-color { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+  /* ── BAR CHART SIMPLE ── */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+  .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .bar-body {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.4s;
+    min-height: 4px;
+  }
+  .bar-label { font-size: 10px; color: var(--text-muted); }
+
+  /* ── ATTENDANCE GRID ── */
+  .att-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .att-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  /* ── TAG ── */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── MSG BUBBLE ── */
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    max-width: 85%;
+  }
+  .msg-out { background: var(--primary); color: #fff; margin-left: auto; border-bottom-right-radius: 2px; }
+  .msg-in { background: #f1f5f9; color: var(--text); border-bottom-left-radius: 2px; }
+  .msg-time { font-size: 10px; opacity: 0.7; margin-top: 3px; text-align: right; }
+  .logout-btn{
+    display:inline-flex;
     align-items:center;
-    gap:12px;
-    padding:6px 8px 20px 8px;
-    border-bottom:1px solid var(--border);
-    margin-bottom:16px;
-  }
-  .brand-mark{
-    width:38px;height:38px;border-radius:11px;
-    background:linear-gradient(135deg,#4f6ef7,#1e2a5e);
-    display:flex;align-items:center;justify-content:center;
-    color:#fff;font-weight:700;font-size:18px;
-    flex-shrink:0;
-  }
-  .brand-name{font-weight:700;font-size:16px;line-height:1.2;}
-  .brand-name span{color:var(--blue-600);}
-  .brand-sub{font-size:12px;color:var(--text-400);}
-
-  .nav-group{margin-bottom:6px;}
-  .nav-label{
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.06em;
-    color:var(--text-400);
-    padding:14px 12px 6px;
-    text-transform:uppercase;
-  }
-  .nav-item{
-    display:flex;align-items:center;gap:12px;
-    padding:10px 12px;
-    border-radius:10px;
-    font-size:14.5px;
-    color:var(--text-600);
-    font-weight:500;
-    margin:2px 0;
-    transition:background .15s,color .15s;
-  }
-  .nav-item:hover{background:#f2f4fb;color:var(--text-900);}
-  .nav-item.active{
-    background:linear-gradient(90deg,#eef1ff,#f4f6ff);
-    color:var(--blue-600);
-    font-weight:600;
-  }
-  .nav-item .ic{
-    width:18px;height:18px;flex-shrink:0;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .sidebar-footer{
-    margin-top:auto;
-    background:#f7f8fc;
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:12px 14px;
-  }
-  .storage-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px;}
-  .storage-bar{height:6px;background:#e6e8f0;border-radius:4px;overflow:hidden;margin-bottom:6px;}
-  .storage-fill{height:100%;width:64%;background:var(--blue-600);border-radius:4px;}
-  .storage-label{font-size:11.5px;color:var(--text-400);}
-
-  /* ---------- MAIN ---------- */
-  .main{display:flex;flex-direction:column;min-height:100vh;}
-
-  .topbar{
-    background:#fff;
-    border-bottom:1px solid var(--border);
-    padding:16px 32px;
-    display:flex;align-items:center;gap:20px;
-    position:sticky;top:0;z-index:5;
-  }
-  .search-box{
-    flex:1;max-width:520px;
-    display:flex;align-items:center;gap:10px;
-    background:var(--bg);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px 14px;
-    color:var(--text-400);
-  }
-  .search-box input{
-    border:none;background:transparent;outline:none;
-    flex:1;font-size:14px;color:var(--text-900);
-  }
-  .kbd{
-    font-size:11px;color:var(--text-400);
-    background:#fff;border:1px solid var(--border);
-    border-radius:6px;padding:2px 6px;
-  }
-  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:22px;}
-  .clock{text-align:right;}
-  .clock .time{font-weight:700;font-size:14px;}
-  .clock .date{font-size:12px;color:var(--text-400);}
-  .icon-btn{
-    position:relative;width:38px;height:38px;border-radius:10px;
-    border:1px solid var(--border);background:#fff;
-    display:flex;align-items:center;justify-content:center;color:var(--text-600);
-  }
-  .icon-btn:hover{background:var(--bg);}
-  .dot{
-    position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;
-    background:var(--red);border:2px solid #fff;
-  }
-  .profile{display:flex;align-items:center;gap:10px;cursor:pointer;}
-  .avatar{
-    width:38px;height:38px;border-radius:10px;background:var(--blue-600);
-    color:#fff;font-weight:700;font-size:13px;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .profile-name{font-size:13.5px;font-weight:700;line-height:1.2;}
-  .profile-role{font-size:11.5px;color:var(--text-400);}
-  .chev{color:var(--text-400);}
-
-  .content{padding:28px 32px;flex:1;}
-  .page{display:none;animation:fade .25s ease;}
-  .page.active{display:block;}
-  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-
-  .breadcrumb{font-size:13px;color:var(--text-400);margin-bottom:6px;}
-  .breadcrumb b{color:var(--blue-600);font-weight:600;}
-  .page-title{font-size:26px;font-weight:800;margin:0 0 4px;}
-  .page-sub{color:var(--text-600);font-size:14.5px;margin-bottom:22px;}
-
-  /* Hero */
-  .hero{
-    background:linear-gradient(120deg,#2a3d8f,#4f6ef7 60%,#6f8bff);
-    border-radius:var(--radius);
-    padding:32px 36px;
+    gap:8px;
+    padding:12px 22px;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
     color:#fff;
-    display:flex;align-items:flex-start;justify-content:space-between;
-    gap:24px;margin-bottom:24px;
-    position:relative;overflow:hidden;
+    text-decoration:none;
+    font-size:15px;
+    font-weight:600;
+    border-radius:12px;
+    transition:all .3s ease;
+    box-shadow:0 8px 20px rgba(37,99,235,.35);
+}
+
+.logout-btn i{
+    font-size:20px;
+}
+
+.logout-btn:hover{
+    transform:translateY(-3px);
+    background:linear-gradient(135deg,#1d4ed8,#1e40af);
+    box-shadow:0 12px 30px rgba(37,99,235,.45);
+}
+
+.logout-btn:active{
+    transform:scale(.96);
+}
+
+  /* ── MAP ZONE ── */
+  .geo-map {
+    background: #e8f4f8;
+    border-radius: var(--radius);
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
   }
-  .hero::after{
-    content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
-    background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
+  .geo-campus {
+    position: absolute;
+    top: 30px; left: 40px;
+    right: 40px; bottom: 30px;
+    background: #c8e6c9;
+    border-radius: 8px;
+    border: 2px dashed #4caf50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2e7d32;
   }
-  .hero h1{font-size:26px;margin:0 0 8px;font-weight:800;}
-  .hero p{margin:0 0 18px;opacity:.9;font-size:14.5px;max-width:520px;}
-  .hero-stats{display:flex;gap:12px;flex-wrap:wrap;}
-  .hero-chip{
-    background:rgba(255,255,255,.14);
-    border:1px solid rgba(255,255,255,.2);
-    border-radius:12px;padding:10px 18px;
-    backdrop-filter:blur(4px);
+  .geo-dot {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
   }
-  .hero-chip .n{font-weight:800;font-size:16px;}
-  .hero-chip .l{font-size:12px;opacity:.85;}
-  .hero-cta{
-    background:#fff;color:var(--blue-700);
-    border:none;border-radius:10px;padding:12px 20px;
-    font-weight:700;font-size:14px;white-space:nowrap;
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
+  .geo-dot.inside { background: var(--success); }
+  .geo-dot.outside { background: var(--danger); }
+  .geo-dot::after {
+    content: '';
+    position: absolute;
+    top: -4px; left: -4px;
+    right: -4px; bottom: -4px;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 2s infinite;
   }
-
-  /* Stat grid */
-  .stat-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:22px;
-  }
-  .stat-card{
-    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-    padding:20px 22px;box-shadow:var(--shadow);
-  }
-  .stat-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-  .stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;}
-  .badge{font-size:12px;font-weight:700;border-radius:8px;padding:4px 8px;}
-  .badge.up{color:var(--green);background:var(--green-bg);}
-  .badge.down{color:var(--red);background:var(--red-bg);}
-  .stat-value{font-size:26px;font-weight:800;}
-  .stat-label{color:var(--text-600);font-size:13.5px;margin-top:2px;margin-bottom:10px;}
-  .spark{width:100%;height:34px;display:block;}
-
-  /* Chart row */
-  .chart-row{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;}
-  .panel{
-    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-    padding:22px 24px;box-shadow:var(--shadow);
-  }
-  .panel h3{margin:0;font-size:16px;font-weight:700;}
-  .panel .sub{color:var(--text-400);font-size:13px;margin:2px 0 14px;}
-  .legend{display:flex;gap:16px;font-size:12.5px;color:var(--text-600);margin-bottom:6px;}
-  .legend span{display:inline-flex;align-items:center;gap:6px;}
-  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
-  .panel-head{display:flex;justify-content:space-between;align-items:flex-start;}
-
-  .donut-wrap{display:flex;align-items:center;gap:20px;}
-  .donut-legend{display:flex;flex-direction:column;gap:10px;font-size:13px;}
-  .donut-legend .row{display:flex;align-items:center;gap:8px;color:var(--text-600);}
-  .donut-legend i{width:9px;height:9px;border-radius:50%;}
-  .donut-legend b{color:var(--text-900);margin-left:auto;}
-
-  /* Forms */
-  .form-grid{display:grid;grid-template-columns:2fr 1fr;gap:20px;}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;box-shadow:var(--shadow);}
-  .field-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px;}
-  .field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:7px;}
-  .field label .req{color:var(--red);}
-  .field input,.field select,.field textarea{
-    width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:10px;
-    font-size:14px;color:var(--text-900);background:#fbfbfd;outline:none;
-  }
-  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue-500);background:#fff;}
-  .field textarea{resize:vertical;min-height:90px;}
-  .seg{display:flex;gap:8px;}
-  .seg button{
-    flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;
-    background:#fff;font-size:13.5px;font-weight:600;color:var(--text-600);
-  }
-  .seg button.active{border-color:var(--blue-500);color:var(--blue-600);background:#eef1ff;}
-  .upload-box{
-    border:2px dashed var(--border);border-radius:12px;padding:26px;text-align:center;
-    color:var(--text-400);font-size:13px;margin:12px 0 18px;cursor:pointer;
-  }
-  .upload-box:hover{border-color:var(--blue-500);}
-  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--border);}
-  .toggle-row:first-of-type{border-top:none;}
-  .toggle-row b{font-size:13.5px;font-weight:600;}
-  .switch{position:relative;width:42px;height:24px;background:#e2e5ee;border-radius:20px;cursor:pointer;transition:.2s;}
-  .switch.on{background:var(--blue-600);}
-  .switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
-  .switch.on::after{left:21px;}
-  .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:20px;}
-  .btn{padding:11px 20px;border-radius:10px;font-weight:700;font-size:13.5px;border:1px solid var(--border);background:#fff;}
-  .btn.primary{background:var(--blue-600);color:#fff;border:none;}
-
-  /* Table */
-  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
-  table{width:100%;border-collapse:collapse;font-size:13.5px;}
-  th{text-align:left;padding:14px 20px;background:#f7f8fc;color:var(--text-400);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em;}
-  td{padding:14px 20px;border-top:1px solid var(--border);color:var(--text-900);}
-  tr:hover td{background:#fafbff;}
-  .pill{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
-  .pill.active{background:var(--green-bg);color:var(--green);}
-  .pill.inactive{background:var(--red-bg);color:var(--red);}
-  .name-cell{display:flex;align-items:center;gap:10px;}
-  .mini-avatar{width:32px;height:32px;border-radius:8px;background:var(--blue-500);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-  .toolbar{display:flex;gap:12px;margin-bottom:18px;}
-  .toolbar input{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
-  .toolbar select{padding:11px 14px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
-
-  /* Seat management */
-  .seat-stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
-  .seat-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow);}
-  .seat-stat .n{font-size:26px;font-weight:800;}
-  .seat-stat .l{font-size:12.5px;color:var(--text-600);}
-  .filter-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:0;}
-  .filter-row{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
-  .filter-row input{flex:1;padding:11px 14px;border:1px solid var(--border);border-radius:10px;}
-  .filter-row select{padding:11px 14px;border:1px solid var(--border);border-radius:10px;}
-  .filter-row button{padding:11px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;font-weight:600;}
-  .legend-check{display:flex;gap:22px;font-size:13px;color:var(--text-600);margin-bottom:18px;}
-  .legend-check span{display:inline-flex;align-items:center;gap:7px;}
-  .legend-check i{width:11px;height:11px;border-radius:50%;}
-  .seat-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:12px;}
-  .seat{
-    aspect-ratio:1/0.85;border-radius:12px;border:1px solid var(--border);
-    display:flex;align-items:center;justify-content:center;font-weight:700;
-    font-size:15px;color:var(--text-600);background:#fff;position:relative;
-  }
-  .seat.active{background:var(--green-bg);color:#15803d;border-color:#bbf0cd;}
-  .seat.duesoon{background:var(--amber-bg);color:#b45309;border-color:#fde3ab;}
-  .seat.overdue{background:var(--red-bg);color:#b91c1c;border-color:#fbc7c7;}
-  .seat .dot2{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;}
-  .seat.active .dot2{background:#22c55e;}
-  .seat.duesoon .dot2{background:#f59e0b;}
-
-  /* Placeholder page */
-  .placeholder{
-    background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);
-    padding:60px 30px;text-align:center;color:var(--text-400);
-  }
-  .placeholder .ic{font-size:34px;margin-bottom:10px;}
-
-  .menu-toggle{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:#fff;align-items:center;justify-content:center;}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:40;}
-  .overlay.show{display:block;}
-
-  @media (max-width:1100px){
-    .field-grid{grid-template-columns:repeat(2,1fr);}
-    .stat-grid{grid-template-columns:repeat(2,1fr);}
-    .chart-row{grid-template-columns:1fr;}
-    .form-grid{grid-template-columns:1fr;}
-    .seat-grid{grid-template-columns:repeat(6,1fr);}
-  }
-  @media (max-width:760px){
-    .app{grid-template-columns:1fr;}
-    .sidebar{position:fixed;left:-280px;top:0;width:260px;z-index:50;transition:left .2s;box-shadow:0 0 40px rgba(0,0,0,.15);}
-    .sidebar.open{left:0;}
-    .menu-toggle{display:flex;}
-    .field-grid{grid-template-columns:1fr;}
-    .stat-grid{grid-template-columns:1fr 1fr;}
-    .seat-grid{grid-template-columns:repeat(4,1fr);}
-    .seat-stat-row{grid-template-columns:repeat(2,1fr);}
-
-    .content{padding:16px;}
-    .topbar{padding:12px 16px;gap:10px;}
-    .search-box{padding:8px 10px;}
-    .search-box input{width:0;}
-    .kbd{display:none;}
-    .clock{display:none;}
-    .topbar-right{gap:8px;}
-    .icon-btn{width:34px;height:34px;}
-    .profile-name,.profile-role{display:none;}
-    .avatar{width:32px;height:32px;}
-
-    .hero{flex-direction:column;padding:22px;}
-    .hero-cta{width:100%;}
-    .hero h1{font-size:21px;}
-    .hero-stats{gap:8px;}
-    .hero-chip{padding:8px 12px;flex:1;min-width:100px;}
-
-    .stat-grid{gap:12px;}
-    .stat-card{padding:16px;}
-    .chart-row{gap:14px;}
-    .panel{padding:18px;overflow-x:auto;}
-    .donut-wrap{flex-direction:column;align-items:flex-start;}
-
-    .form-grid{gap:14px;}
-    .card{padding:18px;}
-
-    .table-wrap{overflow-x:auto;}
-    table{min-width:640px;}
-
-    .filter-row{flex-wrap:wrap;}
-    .filter-row input{min-width:100%;order:-1;}
-    .legend-check{flex-wrap:wrap;gap:10px 16px;}
-    .seat-grid{gap:8px;}
-
-    .toolbar{flex-wrap:wrap;}
-    .toolbar input{min-width:100%;}
-
-    .page-title{font-size:21px;}
+  .geo-dot.inside::after { background: var(--success); }
+  .geo-dot.outside::after { background: var(--danger); }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.5); opacity: 0; }
   }
 
-  @media (max-width:420px){
-    .seat-grid{grid-template-columns:repeat(3,1fr);}
-    .stat-grid{grid-template-columns:1fr;}
-    .seat-stat-row{grid-template-columns:1fr 1fr;}
+  /* ── BIOMETRIC ATTENDANCE ── */
+  /* ── BIO SCANNER CONTAINER ── */
+.bio-scanner {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  border-radius: var(--radius-lg, 16px);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+.bio-scanner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(79,70,229,.15), transparent 70%);
+}
+.bio-scanner > * { position: relative; z-index: 1; }
+
+/* card-body wasn't defined in this file — needed for the scanner card */
+.card-body {
+  padding: 20px;
+}
+
+/* small button variant used by the Simulate button */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+.bio-log {
+  background: rgba(255,255,255,.04);
+  border-radius: var(--radius-sm);
+  padding: .75rem 1rem;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.bio-log-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: .75rem;
+  gap: .5rem;
+}
+.bio-log-entry:last-child { border-bottom: none; }
+.bio-log-entry .name { color: #e2e8f0; font-weight: 500; }
+.bio-log-entry .time { color: #64748b; font-family: monospace; }
+.bio-log-entry .meal {
+  color: #818cf8;
+  font-size: .68rem;
+  padding: .1rem .4rem;
+  background: rgba(79,70,229,.15);
+  border-radius: 9999px;
+}
+  .bio-ring {
+  width: 140px; height: 140px; border-radius: 50%;
+  border: 3px solid rgba(79,70,229,.4);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.bio-ring::before, .bio-ring::after {
+  content: ''; position: absolute; border-radius: 50%;
+  border: 2px solid rgba(79,70,229,.2);
+  animation: ringPulse 2s linear infinite;
+}
+.bio-ring::before { width: 160px; height: 160px; }
+.bio-ring::after { width: 180px; height: 180px; animation-delay: .5s; }
+@keyframes ringPulse { 0%{transform:scale(1);opacity:1} 100%{transform:scale(1.2);opacity:0} }
+
+.bio-finger {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; color: #fff; cursor: pointer;
+  transition: transform .15s;
+  box-shadow: 0 0 30px rgba(79,70,229,.5);
+}
+.bio-finger:hover { transform: scale(1.08); }
+.bio-finger.scanning { animation: bioScan .8s ease infinite alternate; }
+@keyframes bioScan {
+  from { box-shadow: 0 0 20px rgba(79,70,229,.4); }
+  to   { box-shadow: 0 0 50px rgba(79,70,229,.9); }
+}
+
+  .att-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .att-cell {
+    height: 34px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
   }
+  .att-cell.present { background: #dcfce7; color: #166534; }
+  .att-cell.absent { background: #fee2e2; color: #991b1b; }
+  .att-cell.leave { background: #fef3c7; color: #92400e; }
+  .att-cell.weekend { background: #f1f5f9; color: #94a3b8; }
+  .att-legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; color: var(--text-muted); }
+  .att-legend span { display: flex; align-items: center; gap: 6px; }
+  .att-legend span::before { content: ''; width: 10px; height: 10px; border-radius: 3px; }
+  .att-legend .l-present::before { background: #dcfce7; border: 1px solid #166534; }
+  .att-legend .l-absent::before { background: #fee2e2; border: 1px solid #991b1b; }
+  .att-legend .l-leave::before { background: #fef3c7; border: 1px solid #92400e; }
+  .att-legend .l-weekend::before { background: #f1f5f9; border: 1px solid var(--border); }
+
+  /* ── FOOD CHART ── */
+  .food-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .food-bar-label { width: 100px; font-size: 12px; color: var(--text-muted); text-align: right; }
+  .food-bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .food-bar-fill { height: 100%; border-radius: 4px; }
+  .food-bar-val { width: 40px; font-size: 12px; font-weight: 600; color: var(--text); }
+
+  /* ── BIOMETRIC ── */
+  .bio-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .bio-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .bio-dot.online { background: var(--success); }
+  .bio-dot.offline { background: var(--danger); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 800px) {
+    #sidebar { transform: translateX(-100%); }
+    #main { margin-left: 0; }
+    .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── BIOMETRIC ANIMATION ── */
+  .fingerprint-ring {
+    animation: spin 3s linear infinite;
+  }
+  @keyframes spin { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -100; } }
+
+  .notification-popup {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 300px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    z-index: 999;
+    display: none;
+  }
+  .notification-popup.open { display: block; }
+  .notif-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+  }
+  .notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .notif-item:hover { background: var(--bg); }
+  .notif-item:last-child { border-bottom: none; }
+  .notif-item-title { font-weight: 600; color: var(--text); }
+  .notif-item-sub { color: var(--text-muted); font-size: 11.5px; margin-top: 2px; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .spacer { height: 20px; }
+
+  .row { display: flex; gap: 16px; }
+  .col { flex: 1; }
+
+  .inv-level { display: flex; align-items: center; gap: 8px; }
+
+  .sms-log {
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .quick-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg-card);
+  }
+  .quick-action:hover { border-color: var(--primary); background: var(--primary-light); }
+  .quick-action svg { width: 22px; height: 22px; color: var(--primary); }
+  .quick-action-label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); text-align: center; }
+
+  .activity-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-icon {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .activity-icon svg { width: 15px; height: 15px; }
+  .section {
+            display: none;
+            animation: fadeSlide .3s ease
+        }
+
+        .section.active {
+            display: block
+        }
 </style>
 </head>
 <body>
-<div class="app">
 
-  <!-- ===================== SIDEBAR ===================== -->
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-mark">L</div>
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sidebar-brand">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:32px;height:32px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      </div>
       <div>
-        <div class="brand-name">Library<span>OS</span></div>
-        <div class="brand-sub">Admin Console</div>
+        <div class="sidebar-brand-title">CampusAdmin</div>
+        <div class="sidebar-brand-sub">Greenfield College</div>
       </div>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">Overview</div>
-      <a class="nav-item active" data-page="dashboard">
-        <span class="ic">▦</span> Dashboard
-      </a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">Students</div>
-      <a class="nav-item" data-page="registration">
-        <span class="ic">👤+</span> Student Registration
-      </a>
-      <a class="nav-item" data-page="studentlist">
-        <span class="ic">☰</span> Student List
-      </a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">Seating</div>
-      <a class="nav-item" data-page="seating">
-        <span class="ic">▦</span> Seat Management
-      </a>
-    </div>
-
-    <div class="nav-group">
-      <div class="nav-label">System</div>
-      <a class="nav-item" data-page="reports">
-        <span class="ic">📊</span> Reports
-      </a>
-      <a class="nav-item" data-page="settings">
-        <span class="ic">⚙</span> Settings
-      </a>
-      <a class="nav-item" data-page="logout" style="color:#dc2626;">
-        <span class="ic">⏻</span> Logout
-      </a>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="storage-row"><span>Storage</span><span>6.4 / 10 GB</span></div>
-      <div class="storage-bar"><div class="storage-fill"></div></div>
-      <div class="storage-label">Book covers &amp; backups</div>
-    </div>
-  </aside>
-
-  <div class="overlay" id="overlay"></div>
-
-  <!-- ===================== MAIN ===================== -->
-  <div class="main">
-    <div class="topbar">
-      <button class="menu-toggle" id="menuToggle">☰</button>
-      <div class="search-box">
-        <span>🔍</span>
-        <input type="text" placeholder="Search students, books, seats..." value="Anmol">
-        <span class="kbd">⌘K</span>
-      </div>
-      <div class="topbar-right">
-        <div class="clock">
-          <div class="time" id="clockTime">11:00:12 AM</div>
-          <div class="date" id="clockDate">Wed, Jul 8, 2026</div>
-        </div>
-        <button class="icon-btn">🌙</button>
-        <button class="icon-btn">✉️<span class="dot"></span></button>
-        <button class="icon-btn">🔔<span class="dot"></span></button>
-        <div class="profile">
-          <div class="avatar">AS</div>
-          <div>
-            <div class="profile-name">Anmol Sahoo</div>
-            <div class="profile-role">Chief Librarian</div>
-          </div>
-          <span class="chev">⌄</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- ================= DASHBOARD PAGE ================= -->
-      <section class="page active" id="page-dashboard">
-        <div class="breadcrumb"><b>Overview</b> / Dashboard</div>
-
-        <div class="hero">
-          <div>
-            <h1>Good afternoon, Anmol 👋</h1>
-            <p>Here's what's happening across all 3 branches today. 42 books are due back within 48 hours.</p>
-            <div class="hero-stats">
-              <div class="hero-chip"><div class="n">23</div><div class="l">Today's checkouts</div></div>
-              <div class="hero-chip"><div class="n">3</div><div class="l">Active members</div></div>
-              <div class="hero-chip"><div class="n">₹215</div><div class="l">Fine collected</div></div>
-            </div>
-          </div>
-          <button class="hero-cta">+ Issue a book</button>
-        </div>
-
-        <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-top"><div class="stat-icon" style="background:var(--blue-600);">👥</div><span class="badge up">▲ 8.2%</span></div>
-            <div class="stat-value">1,284</div>
-            <div class="stat-label">Total students registered</div>
-            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#3454d1" stroke-width="2.5" points="0,28 25,24 50,30 75,18 100,22 125,10 150,16 175,6 200,10"/></svg>
-          </div>
-          <div class="stat-card">
-            <div class="stat-top"><div class="stat-icon" style="background:var(--teal);">📗</div><span class="badge up">▲ 4.6%</span></div>
-            <div class="stat-value">6,532</div>
-            <div class="stat-label">Books in inventory</div>
-            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#14b8a6" stroke-width="2.5" points="0,24 25,26 50,20 75,24 100,14 125,18 150,8 175,14 200,8"/></svg>
-          </div>
-          <div class="stat-card">
-            <div class="stat-top"><div class="stat-icon" style="background:var(--amber);">📖</div><span class="badge up">▲ 12.1%</span></div>
-            <div class="stat-value">847</div>
-            <div class="stat-label">Books currently issued</div>
-            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#f59e0b" stroke-width="2.5" points="0,20 25,22 50,18 75,24 100,16 125,20 150,14 175,20 200,16"/></svg>
-          </div>
-          <div class="stat-card">
-            <div class="stat-top"><div class="stat-icon" style="background:var(--red);">💲</div><span class="badge down">▼ 2.4%</span></div>
-            <div class="stat-value">₹18,400</div>
-            <div class="stat-label">Pending fine amount</div>
-            <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none"><polyline fill="none" stroke="#dc2626" stroke-width="2.5" points="0,10 25,16 50,14 75,22 100,18 125,26 150,22 175,30 200,28"/></svg>
-          </div>
-        </div>
-
-        <div class="chart-row">
-          <div class="panel">
-            <div class="panel-head">
-              <div>
-                <h3>Circulation activity</h3>
-                <div class="sub">Books issued vs returned — last 7 days</div>
-              </div>
-              <div class="legend">
-                <span><i style="background:#3454d1;"></i>Issued</span>
-                <span><i style="background:#14b8a6;"></i>Returned</span>
-              </div>
-            </div>
-            <svg viewBox="0 0 560 220" width="100%" height="220">
-              <!-- gridlines -->
-              <line x1="30" y1="10" x2="30" y2="190" stroke="#e6e8f0"/>
-              <line x1="30" y1="190" x2="540" y2="190" stroke="#e6e8f0"/>
-              <text x="0" y="14" font-size="11" fill="#9aa0b4">38</text>
-              <text x="0" y="74" font-size="11" fill="#9aa0b4">28</text>
-              <text x="0" y="134" font-size="11" fill="#9aa0b4">19</text>
-              <text x="0" y="190" font-size="11" fill="#9aa0b4">0</text>
-              <!-- bars: 7 days, issued+returned -->
-              <g id="circulation-bars"></g>
-            </svg>
-          </div>
-
-          <div class="panel">
-            <h3>Inventory by category</h3>
-            <div class="sub">Distribution</div>
-            <div class="donut-wrap">
-              <svg width="150" height="150" viewBox="0 0 42 42" id="donut-svg">
-                <circle cx="21" cy="21" r="15.9" fill="transparent" stroke="#eee" stroke-width="6"></circle>
-              </svg>
-              <div class="donut-legend" id="donut-legend"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= STUDENT REGISTRATION PAGE ================= -->
-      <section class="page" id="page-registration">
-        <div class="breadcrumb"><b>Students</b> / Student Registration</div>
-        <div class="page-title">Student Registration</div>
-        <div class="page-sub">Add a new student to the library membership system</div>
-
-        <div class="form-grid">
-          <div class="card">
-            <div class="field-grid">
-              <div class="field"><label>Student name <span class="req">*</span></label><input placeholder="e.g. Priya Sahoo"></div>
-              <div class="field"><label>Roll number <span class="req">*</span></label><input placeholder="e.g. CSE-2024-041"></div>
-              <div class="field"><label>Seat number</label><input placeholder="e.g. 25"></div>
-
-              <div class="field"><label>Registration number</label><input placeholder="e.g. REG-88213"></div>
-              <div class="field"><label>Aadhar number</label><input placeholder="12-digit Aadhar number"></div>
-              <div class="field"><label>Joining date</label><input type="text" placeholder="dd-mm-yyyy"></div>
-
-              <div class="field"><label>Monthly charge (₹)</label><input placeholder="e.g. 800"></div>
-              <div class="field"><label>Due date</label><input type="text" placeholder="dd-mm-yyyy"></div>
-              <div class="field">
-                <label>Gender</label>
-                <div class="seg">
-                  <button class="active">Male</button><button>Female</button><button>Other</button>
-                </div>
-              </div>
-
-              <div class="field"><label>Date of birth</label><input type="text" placeholder="dd-mm-yyyy"></div>
-              <div class="field"><label>Phone <span class="req">*</span></label><input placeholder="10-digit number"></div>
-              <div class="field"><label>Email</label><input placeholder="student@mail.com"></div>
-
-              <div class="field">
-                <label>Blood group</label>
-                <select><option>A+</option><option>B+</option><option>O+</option><option>AB+</option></select>
-              </div>
-              <div class="field"><label>Guardian name</label><input placeholder="Parent / guardian"></div>
-              <div class="field"><label>Guardian phone</label><input placeholder="10-digit number"></div>
-            </div>
-
-            <div class="field" style="margin-bottom:0;">
-              <label>Status</label>
-              <select style="max-width:220px;"><option>Active</option><option>Inactive</option></select>
-            </div>
-
-            <div class="field" style="margin-top:18px;">
-              <label>Address</label>
-              <textarea placeholder="Full residential address"></textarea>
-            </div>
-
-            <div class="form-actions">
-              <button class="btn">Cancel</button>
-              <button class="btn primary" onclick="alert('Demo only — student registered!')">Register student</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3 style="margin:0 0 4px;font-size:16px;">Student photo</h3>
-            <div style="color:var(--text-400);font-size:13px;margin-bottom:2px;">Upload a passport-size photo</div>
-            <div class="upload-box">
-              🖼<br>Click to upload or drag &amp; drop<br>PNG, JPG up to 2MB
-            </div>
-
-            <div class="toggle-row">
-              <b>Auto-generate ID card</b>
-              <div class="switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-            <div class="toggle-row">
-              <b>Send welcome email</b>
-              <div class="switch on" onclick="this.classList.toggle('on')"></div>
-            </div>
-            <div class="toggle-row">
-              <b>Enable library app access</b>
-              <div class="switch" onclick="this.classList.toggle('on')"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= STUDENT LIST PAGE ================= -->
-      <section class="page" id="page-studentlist">
-        <div class="breadcrumb"><b>Students</b> / Student List</div>
-        <div class="page-title">Student List</div>
-        <div class="page-sub">1,284 students registered across all branches</div>
-
-        <div class="toolbar">
-          <input placeholder="Search by name, roll number or phone...">
-          <select><option>All branches</option><option>Main branch</option><option>North branch</option></select>
-          <select><option>All status</option><option>Active</option><option>Inactive</option></select>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Student</th><th>Roll no.</th><th>Seat</th><th>Phone</th><th>Joined</th><th>Status</th></tr>
-            </thead>
-            <tbody id="student-table-body"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ================= SEAT MANAGEMENT PAGE ================= -->
-      <section class="page" id="page-seating">
-        <div class="breadcrumb"><b>Students</b> / <b style="color:var(--blue-600);">Seat Management</b></div>
-        <div class="page-title">Seat Management</div>
-        <div class="page-sub">100 seats — live occupancy &amp; fee status</div>
-
-        <div class="seat-stat-row">
-          <div class="seat-stat"><div class="n">100</div><div class="l">Total seats</div></div>
-          <div class="seat-stat"><div class="n">3</div><div class="l">Occupied</div></div>
-          <div class="seat-stat"><div class="n">97</div><div class="l">Empty</div></div>
-          <div class="seat-stat"><div class="n">1</div><div class="l">Due soon</div></div>
-          <div class="seat-stat"><div class="n">0</div><div class="l">Overdue</div></div>
-        </div>
-
-        <div class="filter-bar">
-          <div class="filter-row">
-            <input placeholder="🔍  Search seat no., name or mobile">
-            <select><option>All seats</option><option>Empty</option><option>Active</option><option>Due soon</option><option>Overdue</option></select>
-            <button id="refreshSeats">⟳ Refresh</button>
-          </div>
-          <div class="legend-check">
-            <span><i style="background:#e9e2fb;border:1px solid #c9b8f5;"></i>Empty</span>
-            <span><i style="background:#22c55e;"></i>Active</span>
-            <span><i style="background:#f59e0b;"></i>Due soon (≤5 days)</span>
-            <span><i style="background:#dc2626;"></i>Overdue</span>
-          </div>
-          <div class="seat-grid" id="seat-grid"></div>
-        </div>
-      </section>
-
-      <!-- ================= REPORTS PAGE ================= -->
-      <section class="page" id="page-reports">
-        <div class="breadcrumb"><b>System</b> / Reports</div>
-        <div class="page-title">Reports</div>
-        <div class="page-sub">Generate and export library analytics</div>
-        <div class="placeholder">
-          <div class="ic">📊</div>
-          Reports module — dummy data view.<br>Monthly circulation, fine collection and inventory reports would appear here.
-        </div>
-      </section>
-
-      <!-- ================= SETTINGS PAGE ================= -->
-      <section class="page" id="page-settings">
-        <div class="breadcrumb"><b>System</b> / Settings</div>
-        <div class="page-title">Settings</div>
-        <div class="page-sub">Manage your library preferences</div>
-        <div class="placeholder">
-          <div class="ic">⚙</div>
-          Settings module — dummy data view.<br>Branch info, fee rules and staff accounts would be managed here.
-        </div>
-      </section>
-
-      <!-- ================= LOGOUT "PAGE" ================= -->
-      <section class="page" id="page-logout">
-        <div class="placeholder" style="margin-top:60px;">
-          <div class="ic">⏻</div>
-          You have been logged out (demo).<br>
-          <button class="btn primary" style="margin-top:14px;" onclick="goPage('dashboard')">Back to Dashboard</button>
-        </div>
-      </section>
-
     </div>
   </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showPanel('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+
+    <div class="nav-section-label">Management</div>
+    <div class="nav-item" onclick="showPanel('students',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Students
+      <span class="nav-badge">1,248</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('employees',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Employees
+    </div>
+    <div class="nav-item" onclick="showPanel('attendance',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Attendance
+      <span class="nav-badge red">3</span>
+    </div>
+     
+
+    <div class="nav-section-label">Canteen</div>
+    <div class="nav-item" onclick="showPanel('canteen',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+      Canteen & Food
+    </div>
+    <div class="nav-item" onclick="showPanel('biometric',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 0 0 8 11a4 4 0 1 1 8 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0 0 15.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 0 0 8 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>
+      Biometric & Geo
+    </div>
+    <div class="nav-item" onclick="showPanel('inventory',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Inventory
+    </div>
+      
+    <div class="nav-item" onclick="showPanel('leave',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Leave & Outpass
+      <span class="nav-badge red">5</span>
+    </div>
+
+    <div class="nav-section-label">Communication</div>
+    <div class="nav-item" onclick="showPanel('messages',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Parent Alerts
+    </div>
+    <div class="nav-item" onclick="showPanel('database',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      Database
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar">AD</div>
+      <div>
+        <div class="user-name" >Admin</div>
+        <div class="user-role">Principal</div>
+      </div>
+      <svg  onclick="showPanel('dashboard')" style="margin-left:auto;color:#475569;cursor:pointer;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <!-- HEADER -->
+  <header id="header">
+    
+    <div class="header-title" id="headerTitle">Dashboard</div>
+    <a href="{% url 'logout' %}" class="logout-btn">
+    <i class='bx bx-log-out'></i>
+    Logout
+</a>
+    <div class="header-actions">
+      <div style="position:relative;">
+        <input class="form-control" placeholder="Search students, employees..." style="width:220px;padding-left:32px;font-size:13px;">
+        <svg style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <button class="btn" onclick="sendAllAlert()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.61 3.47 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        SMS Alert
+      </button>
+      <div class="notif-btn" onclick="toggleNotif()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION POPUP -->
+  <div class="notification-popup" id="notifPopup">
+    <div class="notif-header">
+      Notifications
+      <span style="font-size:11px;color:var(--primary);cursor:pointer;">Mark all read</span>
+    </div>
+    <div class="notif-item">
+      <div class="notif-item-title">5 leave requests pending</div>
+      <div class="notif-item-sub">Requires HOD approval · 2 min ago</div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-item-title">Biometric Device – Block B offline</div>
+      <div class="notif-item-sub">Device not responding · 15 min ago</div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-item-title">3 students absent without notice</div>
+      <div class="notif-item-sub">CS Dept, 2nd year · 1 hr ago</div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-item-title">Rice stock running low (Canteen)</div>
+      <div class="notif-item-sub">Below minimum threshold · 2 hr ago</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="section-title">Good morning, Admin 👋</div>
+      <div class="section-sub">Here's what's happening at Greenfield College today — Wednesday, May 6 2026.</div>
+
+      <!-- Stats Row -->
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon blue" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="stat-label">Total Students</div>
+          <div class="stat-value">1,248</div>
+          <div class="stat-change up">↑ 42 this semester</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-label">Employees</div>
+          <div class="stat-value">187</div>
+          <div class="stat-change up">↑ 5 new joins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="stat-label">Today's Attendance</div>
+          <div class="stat-value">91.4%</div>
+          <div class="stat-change down">↓ 2.1% vs yesterday</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-label">Pending Leaves</div>
+          <div class="stat-value">5</div>
+          <div class="stat-change down">Needs approval</div>
+        </div>
+      </div>
+
+      <!-- Second Row -->
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-icon purple" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          </div>
+          <div class="stat-label">Canteen Orders Today</div>
+          <div class="stat-value">842</div>
+          <div class="stat-change up">↑ 18% vs avg</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon teal" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <div class="stat-label">Inventory Items Low</div>
+          <div class="stat-value">3</div>
+          <div class="stat-change down">Reorder needed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <div class="stat-label">SMS Sent Today</div>
+          <div class="stat-value">284</div>
+          <div class="stat-change up">Parents notified</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green" style="float:right;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="stat-label">Geo Alerts Today</div>
+          <div class="stat-value">2</div>
+          <div class="stat-change down">Boundary breach</div>
+        </div>
+      </div>
+
+      <!-- Charts & Activity -->
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col" style="flex:1.5;">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Weekly Attendance Overview</div>
+                <div class="card-subtitle">Students vs Employees</div>
+              </div>
+              <select class="form-control" style="width:120px;font-size:12px;">
+                <option>This Week</option>
+                <option>Last Week</option>
+              </select>
+            </div>
+            <div class="bar-chart">
+              <div class="bar-item"><div class="bar-body" style="height:82%;background:#1a56db;"></div><div class="bar-label">Mon</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:91%;background:#1a56db;"></div><div class="bar-label">Tue</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:88%;background:#1a56db;"></div><div class="bar-label">Wed</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:75%;background:#1a56db;"></div><div class="bar-label">Thu</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:70%;background:#1a56db;"></div><div class="bar-label">Fri</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:20%;background:#e2e8f0;"></div><div class="bar-label">Sat</div></div>
+              <div class="bar-item"><div class="bar-body" style="height:5%;background:#e2e8f0;"></div><div class="bar-label">Sun</div></div>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:16px;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);"><div style="width:10px;height:10px;border-radius:2px;background:#1a56db;"></div>Students</div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);"><div style="width:10px;height:10px;border-radius:2px;background:#e2e8f0;"></div>No Data</div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="height:100%;">
+            <div class="card-header">
+              <div class="card-title">Dept. Attendance</div>
+            </div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e2e8f0" stroke-width="3.8"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#1a56db" stroke-width="3.8" stroke-dasharray="35 65" stroke-dashoffset="0"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#16a34a" stroke-width="3.8" stroke-dasharray="25 75" stroke-dashoffset="-35"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#d97706" stroke-width="3.8" stroke-dasharray="20 80" stroke-dashoffset="-60"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="#7c3aed" stroke-width="3.8" stroke-dasharray="15 85" stroke-dashoffset="-80"/>
+              </svg>
+              <div class="donut-legend">
+                <div class="donut-item"><div class="donut-color" style="background:#1a56db;"></div><span>CS — 94%</span></div>
+                <div class="donut-item"><div class="donut-color" style="background:#16a34a;"></div><span>ECE — 89%</span></div>
+                <div class="donut-item"><div class="donut-color" style="background:#d97706;"></div><span>Mech — 85%</span></div>
+                <div class="donut-item"><div class="donut-color" style="background:#7c3aed;"></div><span>Civil — 91%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions & Recent -->
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Quick Actions</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+              <div class="quick-action" onclick="showPanel('students',document.querySelector('[onclick*=students]'))">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                <span class="quick-action-label">Add Student</span>
+              </div>
+              <div class="quick-action" onclick="showPanel('attendance',document.querySelector('[onclick*=attendance]'))">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span class="quick-action-label">Mark Attend.</span>
+              </div>
+              <div class="quick-action" onclick="showPanel('messages',document.querySelector('[onclick*=messages]'))">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span class="quick-action-label">Send Alert</span>
+              </div>
+              <div class="quick-action" onclick="showPanel('leave',document.querySelector('[onclick*=leave]'))">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span class="quick-action-label">Approve Leave</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="height:100%;">
+            <div class="card-title" style="margin-bottom:14px;">Recent Activity</div>
+            <div class="activity-row">
+              <div class="activity-icon" style="background:#dcfce7;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;">Attendance marked — CS 3rd yr</div>
+                <div style="font-size:11px;color:var(--text-muted);">8:42 AM via biometric</div>
+              </div>
+            </div>
+            <div class="activity-row">
+              <div class="activity-icon" style="background:#fee2e2;"><svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;">Geo-breach: Arjun Sharma (CS201)</div>
+                <div style="font-size:11px;color:var(--text-muted);">9:15 AM – Parent alerted</div>
+              </div>
+            </div>
+            <div class="activity-row">
+              <div class="activity-icon" style="background:#fef3c7;"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;">Leave request — Priya Nair (ME401)</div>
+                <div style="font-size:11px;color:var(--text-muted);">9:30 AM – Pending HOD approval</div>
+              </div>
+            </div>
+            <div class="activity-row">
+              <div class="activity-icon" style="background:#dbeafe;"><svg viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="2"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;">Canteen lunch prep started</div>
+                <div style="font-size:11px;color:var(--text-muted);">10:00 AM — 320 portions</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ STUDENTS ══ -->
+    <div class="panel" id="panel-students">
+      <div class="section-title">Students</div>
+      <div class="section-sub">Manage student records, departments, and academic information.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Total Enrolled</div><div class="stat-value">1,248</div></div>
+        <div class="stat-card"><div class="stat-label">Active This Sem</div><div class="stat-value">1,241</div></div>
+        <div class="stat-card"><div class="stat-label">New Admissions</div><div class="stat-value">312</div></div>
+        <div class="stat-card"><div class="stat-label">Scholarships</div><div class="stat-value">84</div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div class="card-title">Add New Student</div>
+        </div>
+        <div class="grid-3">
+          <div class="form-group"><label class="form-label">Full Name</label><input class="form-control" placeholder="e.g. Rahul Kumar"></div>
+          <div class="form-group"><label class="form-label">Roll Number</label><input class="form-control" placeholder="e.g. CS2024001"></div>
+          <div class="form-group"><label class="form-label">Department</label>
+            <select class="form-control"><option>Computer Science</option><option>Electronics</option><option>Mechanical</option><option>Civil</option><option>MBA</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Year</label>
+            <select class="form-control"><option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Parent Phone</label><input class="form-control" placeholder="+91 98765 43210"></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-control" placeholder="student@college.edu"></div>
+        </div>
+        <button class="btn btn-primary">Add Student</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Student Directory</div>
+          <div style="display:flex;gap:8px;">
+            <select class="form-control" style="width:130px;font-size:12px;"><option>All Departments</option><option>CS</option><option>ECE</option><option>Mech</option></select>
+            <select class="form-control" style="width:100px;font-size:12px;"><option>All Years</option><option>1st</option><option>2nd</option><option>3rd</option><option>4th</option></select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Roll No</th><th>Name</th><th>Department</th><th>Year</th><th>Attendance</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag">CS2024001</span></td><td><b>Arjun Sharma</b></td><td>Computer Science</td><td>3rd Year</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:60px;"><div class="progress-fill" style="width:94%;background:#16a34a;"></div></div>94%</div></td><td><span class="badge success">Active</span></td><td><button class="btn" style="font-size:11px;padding:4px 10px;">View</button></td></tr>
+              <tr><td><span class="tag">CS2024042</span></td><td><b>Priya Nair</b></td><td>Computer Science</td><td>4th Year</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:60px;"><div class="progress-fill" style="width:88%;background:#1a56db;"></div></div>88%</div></td><td><span class="badge warning">Leave</span></td><td><button class="btn" style="font-size:11px;padding:4px 10px;">View</button></td></tr>
+              <tr><td><span class="tag">EC2024015</span></td><td><b>Ravi Patel</b></td><td>Electronics</td><td>2nd Year</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:60px;"><div class="progress-fill" style="width:72%;background:#d97706;"></div></div>72%</div></td><td><span class="badge danger">Low Att.</span></td><td><button class="btn" style="font-size:11px;padding:4px 10px;">View</button></td></tr>
+              <tr><td><span class="tag">ME2024007</span></td><td><b>Sneha Reddy</b></td><td>Mechanical</td><td>1st Year</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:60px;"><div class="progress-fill" style="width:97%;background:#16a34a;"></div></div>97%</div></td><td><span class="badge success">Active</span></td><td><button class="btn" style="font-size:11px;padding:4px 10px;">View</button></td></tr>
+              <tr><td><span class="tag">CV2024033</span></td><td><b>Kiran Mehta</b></td><td>Civil</td><td>2nd Year</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:60px;"><div class="progress-fill" style="width:65%;background:#dc2626;"></div></div>65%</div></td><td><span class="badge danger">Warning</span></td><td><button class="btn" style="font-size:11px;padding:4px 10px;">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EMPLOYEES ══ -->
+    <div class="panel" id="panel-employees">
+      <div class="section-title">Employees</div>
+      <div class="section-sub">Faculty, staff, and administrative personnel management.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Total Staff</div><div class="stat-value">187</div></div>
+        <div class="stat-card"><div class="stat-label">Teaching Faculty</div><div class="stat-value">112</div></div>
+        <div class="stat-card"><div class="stat-label">Non-Teaching</div><div class="stat-value">52</div></div>
+        <div class="stat-card"><div class="stat-label">On Leave Today</div><div class="stat-value">8</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Employee Records</div><button class="btn btn-primary" style="font-size:12px;">+ Add Employee</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Department</th><th>Attendance</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>EMP001</td><td><b>Dr. S. Menon</b></td><td><span class="badge info">HOD</span></td><td>Computer Science</td><td>97%</td><td><span class="badge success">Present</span></td></tr>
+              <tr><td>EMP002</td><td><b>Prof. A. Iyer</b></td><td><span class="badge gray">Faculty</span></td><td>Electronics</td><td>92%</td><td><span class="badge success">Present</span></td></tr>
+              <tr><td>EMP003</td><td><b>Dr. R. Gupta</b></td><td><span class="badge purple">Principal</span></td><td>Administration</td><td>99%</td><td><span class="badge success">Present</span></td></tr>
+              <tr><td>EMP015</td><td><b>Mr. P. Kumar</b></td><td><span class="badge gray">Staff</span></td><td>Library</td><td>85%</td><td><span class="badge warning">On Leave</span></td></tr>
+              <tr><td>EMP022</td><td><b>Ms. D. Shah</b></td><td><span class="badge gray">Faculty</span></td><td>Mechanical</td><td>88%</td><td><span class="badge success">Present</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ATTENDANCE ══ -->
+    <div class="panel" id="panel-attendance">
+      <div class="section-title">Attendance Management</div>
+      <div class="section-sub">Daily attendance tracking with automated parent notifications.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Present Today</div><div class="stat-value" style="color:var(--success);">1,140</div></div>
+        <div class="stat-card"><div class="stat-label">Absent</div><div class="stat-value" style="color:var(--danger);">108</div></div>
+        <div class="stat-card"><div class="stat-label">Late Arrivals</div><div class="stat-value" style="color:var(--warning);">34</div></div>
+        <div class="stat-card"><div class="stat-label">SMS Sent</div><div class="stat-value">108</div></div>
+      </div>
+
+      <div class="alert warning">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        3 students have attendance below 75% — parents will be automatically notified.
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col" style="flex:1.2;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Today's Attendance Log</div>
+              <div style="display:flex;gap:8px;">
+                <select class="form-control" style="width:140px;font-size:12px;"><option>All Departments</option><option>CS</option><option>ECE</option></select>
+                <button class="btn btn-primary" style="font-size:12px;">Export CSV</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Roll No</th><th>Name</th><th>In Time</th><th>Source</th><th>Status</th><th>Parent Notified</th></tr></thead>
+                <tbody>
+                  <tr><td>CS2024001</td><td>Arjun Sharma</td><td>08:42 AM</td><td><span class="badge info">Biometric</span></td><td><span class="badge success">Present</span></td><td>—</td></tr>
+                  <tr><td>CS2024042</td><td>Priya Nair</td><td>—</td><td>—</td><td><span class="badge warning">Leave</span></td><td><span class="badge success">Yes</span></td></tr>
+                  <tr><td>EC2024015</td><td>Ravi Patel</td><td>—</td><td>—</td><td><span class="badge danger">Absent</span></td><td><span class="badge success">Yes</span></td></tr>
+                  <tr><td>ME2024007</td><td>Sneha Reddy</td><td>08:38 AM</td><td><span class="badge info">Biometric</span></td><td><span class="badge success">Present</span></td><td>—</td></tr>
+                  <tr><td>CV2024033</td><td>Kiran Mehta</td><td>09:10 AM</td><td><span class="badge purple">Geo-fence</span></td><td><span class="badge warning">Late</span></td><td><span class="badge warning">Late Alert</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Monthly Calendar View</div>
+            <div style="margin-bottom:8px;font-size:12px;color:var(--text-muted);">May 2026</div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;margin-bottom:6px;">
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">S</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">M</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">T</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">W</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">T</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">F</div>
+              <div style="font-size:10px;color:var(--text-muted);font-weight:600;">S</div>
+            </div>
+            <div class="att-grid">
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;"></div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">1</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">2</div>
+              <div class="att-cell" style="background:#fee2e2;color:#991b1b;">3</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">4</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">5</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">6</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">7</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">8</div>
+              <div class="att-cell" style="background:#fef3c7;color:#92400e;">9</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">10</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">11</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">12</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">13</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">14</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">15</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">16</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">17</div>
+              <div class="att-cell" style="background:#fee2e2;color:#991b1b;">18</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">19</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">20</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">21</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">22</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">23</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">24</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">25</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">26</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">27</div>
+              <div class="att-cell" style="background:#f1f5f9;color:#94a3b8;">28</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">29</div>
+              <div class="att-cell" style="background:#dcfce7;color:#166534;">30</div>
+              <div class="att-cell" style="background:#dbeafe;color:#1e40af;font-weight:700;border:2px solid #1a56db;">31</div>
+              <div class="att-cell" style="background:transparent;"></div>
+              <div class="att-cell" style="background:transparent;"></div>
+              <div class="att-cell" style="background:transparent;"></div>
+              <div class="att-cell" style="background:transparent;"></div>
+            </div>
+            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;"><div style="width:10px;height:10px;border-radius:2px;background:#dcfce7;"></div>High ≥90%</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;"><div style="width:10px;height:10px;border-radius:2px;background:#fef3c7;"></div>Avg 75-90%</div>
+              <div style="display:flex;align-items:center;gap:5px;font-size:11px;"><div style="width:10px;height:10px;border-radius:2px;background:#fee2e2;"></div>Low &lt;75%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BIOMETRIC & GEO ══ -->
+    <div class="panel" id="panel-biometric">
+      <div class="section-title">Biometric Attendance & Geo-fencing</div>
+      <div class="section-sub">Real-time fingerprint-based attendance linked with campus access and meal service.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Present Today</div><div class="stat-value" style="color:var(--success);">1,140</div><div class="stat-change up">Biometric verified</div></div>
+        <div class="stat-card"><div class="stat-label">Absent</div><div class="stat-value" style="color:var(--danger);">108</div><div class="stat-change down">Parents notified</div></div>
+        <div class="stat-card"><div class="stat-label">Geo Alerts</div><div class="stat-value" style="color:var(--warning);">2</div><div class="stat-change warning">Boundary breach</div></div>
+        <div class="stat-card"><div class="stat-label">Meal Access</div><div class="stat-value">842</div><div class="stat-change up">Linked to attendance</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col" style="flex:1.2;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Biometric Scanner</div>
+              <div class="bio-status"><span class="bio-dot online"></span> Scanner online · Block B</div>
+            </div>
+            <div class="card-body">
+              <div class="bio-scanner">
+                            <div
+                                style="color:#94a3b8;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;z-index:1">
+                                Biometric Scanner</div>
+                                <div class="bio-ring" style="z-index:1">
+    <div class="bio-finger" id="bioFinger" onclick="simulateScan()" title="Click to simulate scan">
+        <i class='bx bx-fingerprint'></i>
+    </div>
 </div>
+                             
+                            <div class="bio-status" id="bioStatus">Place finger on scanner or click to simulate</div>
+                            <div style="display:flex;gap:.75rem;z-index:1">
+                                <select class="form-control" id="bioMealType"
+                                    style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#e2e8f0;font-size:.78rem">
+                                    <option value="breakfast">🌅 Breakfast</option>
+                                    <option value="lunch">☀️ Lunch</option>
+                                    <option value="snacks">🌤️ Snacks</option>
+                                    <option value="dinner">🌙 Dinner</option>
+                                </select>
+                                <button class="btn btn-primary btn-sm" onclick="simulateScan()"><i
+                                        class='bx bx-scan'></i> Simulate</button>
+                            </div>
+                            <div class="bio-log" id="bioLog">
+                                <div style="color:#64748b;font-size:.75rem;text-align:center">Recent scans will appear
+                                    here</div>
+                            </div>
+                        </div>
+
+                        <!-- Today's summary table -->
+                        <div class="card" style="margin-bottom:0">
+                            <div class="card-head">
+                                <div class="card-title">Today's Attendance</div>
+                            </div>
+                            <div class="table-wrap" style="max-height:380px;overflow-y:auto">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Time In</th>
+                                            <th>Meal</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="todayAttTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Monthly Attendance Calendar</div>
+            </div>
+            <div class="card-body">
+              <div class="att-legend" style="margin-bottom:12px;">
+                <span class="l-present">Present</span>
+                <span class="l-absent">Absent</span>
+                <span class="l-leave">Leave</span>
+                <span class="l-weekend">Weekend</span>
+              </div>
+              <div class="att-grid">
+                <div class="att-cell weekend"></div>
+                <div class="att-cell present">1</div>
+                <div class="att-cell present">2</div>
+                <div class="att-cell absent">3</div>
+                <div class="att-cell present">4</div>
+                <div class="att-cell present">5</div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell present">8</div>
+                <div class="att-cell leave">9</div>
+                <div class="att-cell present">10</div>
+                <div class="att-cell present">11</div>
+                <div class="att-cell present">12</div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell present">15</div>
+                <div class="att-cell present">16</div>
+                <div class="att-cell present">17</div>
+                <div class="att-cell absent">18</div>
+                <div class="att-cell present">19</div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell present">22</div>
+                <div class="att-cell present">23</div>
+                <div class="att-cell present">24</div>
+                <div class="att-cell present">25</div>
+                <div class="att-cell present">26</div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell weekend"></div>
+                <div class="att-cell present">29</div>
+                <div class="att-cell present">30</div>
+                <div class="att-cell present">31</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ══ CANTEEN ══ -->
+    <div class="panel" id="panel-canteen">
+      <div class="section-title">Canteen & Food Management</div>
+      <div class="section-sub">Daily food demand forecasting, consumption tracking, and variable quantity planning.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Today's Headcount</div><div class="stat-value">1,140</div><div class="stat-change up">Students present</div></div>
+        <div class="stat-card"><div class="stat-label">Meals Served</div><div class="stat-value">842</div><div class="stat-change up">↑ 18% avg</div></div>
+        <div class="stat-card"><div class="stat-label">Food Waste</div><div class="stat-value" style="color:var(--warning);">4.2%</div><div class="stat-change down">↓ 1.1% from last</div></div>
+        <div class="stat-card"><div class="stat-label">Revenue Today</div><div class="stat-value">₹28,440</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col" style="flex:1.3;">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Food Demand vs Consumption</div>
+              <div style="font-size:12px;color:var(--text-muted);">Today — 1,140 students + 187 staff</div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">BREAKFAST (8:00 AM – 9:30 AM)</div>
+              <div class="food-bar"><div class="food-bar-label">Idli/Vada</div><div class="food-bar-track"><div class="food-bar-fill" style="width:92%;background:#1a56db;"></div></div><div class="food-bar-val">920 kg</div></div>
+              <div class="food-bar"><div class="food-bar-label">Upma</div><div class="food-bar-track"><div class="food-bar-fill" style="width:68%;background:#16a34a;"></div></div><div class="food-bar-val">680 kg</div></div>
+              <div class="food-bar"><div class="food-bar-label">Tea/Coffee</div><div class="food-bar-track"><div class="food-bar-fill" style="width:85%;background:#d97706;"></div></div><div class="food-bar-val">850 L</div></div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">LUNCH (12:30 PM – 2:00 PM)</div>
+              <div class="food-bar"><div class="food-bar-label">Rice</div><div class="food-bar-track"><div class="food-bar-fill" style="width:88%;background:#1a56db;"></div></div><div class="food-bar-val">440 kg</div></div>
+              <div class="food-bar"><div class="food-bar-label">Sambar/Dal</div><div class="food-bar-track"><div class="food-bar-fill" style="width:75%;background:#16a34a;"></div></div><div class="food-bar-val">375 L</div></div>
+              <div class="food-bar"><div class="food-bar-label">Chapati</div><div class="food-bar-track"><div class="food-bar-fill" style="width:60%;background:#7c3aed;"></div></div><div class="food-bar-val">300 pcs</div></div>
+              <div class="food-bar"><div class="food-bar-label">Sabzi</div><div class="food-bar-track"><div class="food-bar-fill" style="width:72%;background:#d97706;"></div></div><div class="food-bar-val">180 kg</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:14px;">Dynamic Quantity Calculator</div>
+            <div class="form-group">
+              <label class="form-label">Expected Students</label>
+              <input class="form-control" type="number" id="studentCount" value="1140" oninput="calcFood()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expected Staff</label>
+              <input class="form-control" type="number" id="staffCount" value="187" oninput="calcFood()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Meal Type</label>
+              <select class="form-control" id="mealType" onchange="calcFood()">
+                <option value="lunch">Lunch</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="dinner">Dinner</option>
+              </select>
+            </div>
+            <div id="foodCalcResult" style="background:var(--bg);border-radius:var(--radius-sm);padding:12px;border:1px solid var(--border);">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">RECOMMENDED QUANTITIES</div>
+              <div id="calcItems"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Weekly Food Trend Analysis</div></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Day</th><th>Students Present</th><th>Rice (kg)</th><th>Dal (L)</th><th>Chapati (pcs)</th><th>Waste %</th><th>Cost (₹)</th></tr></thead>
+            <tbody>
+              <tr><td>Monday</td><td>1,020</td><td>408</td><td>340</td><td>260</td><td><span class="badge success">3.1%</span></td><td>24,800</td></tr>
+              <tr><td>Tuesday</td><td>1,100</td><td>440</td><td>365</td><td>280</td><td><span class="badge success">3.8%</span></td><td>26,400</td></tr>
+              <tr><td>Wednesday</td><td>1,140</td><td>456</td><td>380</td><td>290</td><td><span class="badge warning">4.2%</span></td><td>28,440</td></tr>
+              <tr><td>Thursday (Proj.)</td><td>1,090</td><td>436</td><td>362</td><td>275</td><td><span class="badge gray">Projected</span></td><td>27,100</td></tr>
+              <tr><td>Friday (Proj.)</td><td>980</td><td>392</td><td>326</td><td>245</td><td><span class="badge gray">Projected</span></td><td>24,500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INVENTORY ══ -->
+    <div class="panel" id="panel-inventory">
+      <div class="section-title">Inventory Management</div>
+      <div class="section-sub">Track stock levels, usage, and automatic reorder alerts for all departments.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Total Items</div><div class="stat-value">248</div></div>
+        <div class="stat-card"><div class="stat-label">Low Stock Alerts</div><div class="stat-value" style="color:var(--warning);">3</div></div>
+        <div class="stat-card"><div class="stat-label">Out of Stock</div><div class="stat-value" style="color:var(--danger);">1</div></div>
+        <div class="stat-card"><div class="stat-label">Orders Pending</div><div class="stat-value">7</div></div>
+      </div>
+
+      <div class="alert danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Rice (Canteen) is OUT OF STOCK. Immediate procurement required.
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Inventory Register</div>
+          <div style="display:flex;gap:8px;">
+            <select class="form-control" style="width:130px;font-size:12px;"><option>All Categories</option><option>Canteen</option><option>Lab</option><option>Stationery</option></select>
+            <button class="btn btn-primary" style="font-size:12px;">+ Add Item</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Item</th><th>Category</th><th>Current Stock</th><th>Min Level</th><th>Level</th><th>Last Updated</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><b>Rice</b></td><td>Canteen</td><td>0 kg</td><td>50 kg</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:0%;background:#dc2626;"></div></div>0%</div></td><td>Today 7AM</td><td><span class="badge danger">Out of Stock</span></td></tr>
+              <tr><td><b>Sambar Powder</b></td><td>Canteen</td><td>2.4 kg</td><td>5 kg</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:24%;background:#d97706;"></div></div>24%</div></td><td>Yesterday</td><td><span class="badge warning">Low Stock</span></td></tr>
+              <tr><td><b>A4 Paper</b></td><td>Stationery</td><td>48 reams</td><td>20 reams</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:80%;background:#16a34a;"></div></div>80%</div></td><td>3 days ago</td><td><span class="badge success">OK</span></td></tr>
+              <tr><td><b>Chemicals – CS Lab</b></td><td>Lab</td><td>12 L</td><td>20 L</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:30%;background:#d97706;"></div></div>30%</div></td><td>2 days ago</td><td><span class="badge warning">Low Stock</span></td></tr>
+              <tr><td><b>Chalk / Markers</b></td><td>Stationery</td><td>340 pcs</td><td>100 pcs</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:90%;background:#16a34a;"></div></div>90%</div></td><td>1 week ago</td><td><span class="badge success">OK</span></td></tr>
+              <tr><td><b>Dal / Lentils</b></td><td>Canteen</td><td>18 kg</td><td>30 kg</td><td><div class="inv-level"><div class="progress-bar" style="width:80px;"><div class="progress-fill" style="width:35%;background:#d97706;"></div></div>35%</div></td><td>Today 6AM</td><td><span class="badge warning">Low Stock</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LEAVE & OUTPASS ══ -->
+    <div class="panel" id="panel-leave">
+      <div class="section-title">Leave & Outpass Management</div>
+      <div class="section-sub">Student leave requests, outpass approvals, and real-time parent/HOD notifications.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Pending Approval</div><div class="stat-value" style="color:var(--warning);">5</div></div>
+        <div class="stat-card"><div class="stat-label">Approved Today</div><div class="stat-value" style="color:var(--success);">12</div></div>
+        <div class="stat-card"><div class="stat-label">Active Outpasses</div><div class="stat-value">3</div></div>
+        <div class="stat-card"><div class="stat-label">Rejected</div><div class="stat-value" style="color:var(--danger);">2</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col" style="flex:1.5;">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Pending Requests</div><span class="badge warning">5 pending</span></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Student</th><th>Type</th><th>Reason</th><th>Duration</th><th>HOD</th><th>Actions</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td><b>Priya Nair</b><div style="font-size:11px;color:var(--text-muted);">CS2024042</div></td>
+                    <td><span class="badge info">Medical</span></td>
+                    <td>Fever — hospital visit</td>
+                    <td>2 days</td>
+                    <td>Dr. S. Menon</td>
+                    <td><button class="btn btn-success" style="font-size:11px;padding:3px 10px;margin-right:4px;" onclick="approveLeave(this)">✓ Approve</button><button class="btn btn-danger" style="font-size:11px;padding:3px 10px;" onclick="rejectLeave(this)">✗ Reject</button></td>
+                  </tr>
+                  <tr>
+                    <td><b>Kiran Mehta</b><div style="font-size:11px;color:var(--text-muted);">CV2024033</div></td>
+                    <td><span class="badge warning">Personal</span></td>
+                    <td>Family function</td>
+                    <td>1 day</td>
+                    <td>Dr. P. Rao</td>
+                    <td><button class="btn btn-success" style="font-size:11px;padding:3px 10px;margin-right:4px;" onclick="approveLeave(this)">✓ Approve</button><button class="btn btn-danger" style="font-size:11px;padding:3px 10px;" onclick="rejectLeave(this)">✗ Reject</button></td>
+                  </tr>
+                  <tr>
+                    <td><b>Rohit Das</b><div style="font-size:11px;color:var(--text-muted);">ME2024019</div></td>
+                    <td><span class="badge purple">Outpass</span></td>
+                    <td>Stationery purchase</td>
+                    <td>2 hours</td>
+                    <td>Dr. K. Bose</td>
+                    <td><button class="btn btn-success" style="font-size:11px;padding:3px 10px;margin-right:4px;" onclick="approveLeave(this)">✓ Approve</button><button class="btn btn-danger" style="font-size:11px;padding:3px 10px;" onclick="rejectLeave(this)">✗ Reject</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Notification Log</div>
+            <div class="timeline">
+              <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-time">09:32 AM</div><div class="timeline-text">SMS sent to Priya's parent — Leave approved</div></div>
+              <div class="timeline-item"><div class="timeline-dot blue"></div><div class="timeline-time">09:15 AM</div><div class="timeline-text">HOD Dr. Menon notified — Priya's leave request</div></div>
+              <div class="timeline-item"><div class="timeline-dot amber"></div><div class="timeline-time">08:58 AM</div><div class="timeline-text">Kiran's leave submitted → Dr. Rao (HOD)</div></div>
+              <div class="timeline-item"><div class="timeline-dot green"></div><div class="timeline-time">08:45 AM</div><div class="timeline-text">Rohit's outpass request forwarded</div></div>
+              <div class="timeline-item"><div class="timeline-dot red"></div><div class="timeline-time">08:30 AM</div><div class="timeline-text">Arjun's outpass rejected — no valid reason</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PARENT ALERTS ══ -->
+    <div class="panel" id="panel-messages">
+      <div class="section-title">Parent Alerts & Communication</div>
+      <div class="section-sub">Automated SMS alerts for attendance, absence, geo-breach, leave, and outpass events.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">SMS Sent Today</div><div class="stat-value">284</div></div>
+        <div class="stat-card"><div class="stat-label">Absence Alerts</div><div class="stat-value">108</div></div>
+        <div class="stat-card"><div class="stat-label">Geo-fence Alerts</div><div class="stat-value">2</div></div>
+        <div class="stat-card"><div class="stat-label">Leave Approvals</div><div class="stat-value">12</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Send Manual Alert</div>
+            <div class="form-group"><label class="form-label">Alert Type</label>
+              <select class="form-control" id="alertType">
+                <option>Absence Notification</option>
+                <option>Late Arrival</option>
+                <option>Geo-fence Breach</option>
+                <option>Leave Approved</option>
+                <option>Outpass Issued</option>
+                <option>Low Attendance Warning</option>
+                <option>Custom Message</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Select Student</label>
+              <select class="form-control">
+                <option>Arjun Sharma (CS2024001)</option>
+                <option>Priya Nair (CS2024042)</option>
+                <option>Ravi Patel (EC2024015)</option>
+                <option>Sneha Reddy (ME2024007)</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Message Preview</label>
+              <textarea class="form-control" rows="4" id="msgPreview">Dear Parent, your ward Arjun Sharma (CS2024001) was ABSENT on 06-May-2026. Please contact the college if there is an emergency. – Greenfield College Admin</textarea>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-primary" onclick="sendSMS()">📱 Send SMS</button>
+              <button class="btn">Send to HOD also</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col" style="flex:1.3;">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Recent Sent Alerts</div>
+            <div class="sms-log">
+              <div style="display:flex;flex-direction:column;">
+                <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:600;">Absence Alert → Ravi Patel's Parent</span><span class="badge danger">Absent</span></div>
+                  <div style="font-size:12px;color:var(--text-muted);">Your ward Ravi Patel (EC2024015) was absent today. Contact admin if needed.</div>
+                  <div style="font-size:11px;color:var(--text-light);margin-top:4px;">9:05 AM · +91 98765 43211 · Delivered ✓</div>
+                </div>
+                <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:600;">Geo-breach → Arjun Sharma's Parent</span><span class="badge danger">Alert</span></div>
+                  <div style="font-size:12px;color:var(--text-muted);">Your ward Arjun Sharma has exited campus without an outpass at 9:15 AM.</div>
+                  <div style="font-size:11px;color:var(--text-light);margin-top:4px;">9:16 AM · +91 98765 43210 · Delivered ✓</div>
+                </div>
+                <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:600;">Leave Approved → Priya Nair's Parent</span><span class="badge success">Approved</span></div>
+                  <div style="font-size:12px;color:var(--text-muted);">Leave for Priya Nair has been approved for 2 days (6-7 May) due to medical reasons.</div>
+                  <div style="font-size:11px;color:var(--text-light);margin-top:4px;">9:32 AM · +91 98765 44200 · Delivered ✓</div>
+                </div>
+                <div style="background:#f8fafc;border-radius:8px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;font-weight:600;">Low Attendance → Kiran Mehta's Parent</span><span class="badge warning">Warning</span></div>
+                  <div style="font-size:12px;color:var(--text-muted);">Kiran Mehta's attendance has dropped to 65%. Minimum required is 75%.</div>
+                  <div style="font-size:11px;color:var(--text-light);margin-top:4px;">8:00 AM · +91 98765 55100 · Delivered ✓</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ DATABASE ══ -->
+    <div class="panel" id="panel-database">
+      <div class="section-title">Database Management</div>
+      <div class="section-sub">Central data repository — backups, exports, system health, and records overview.</div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value">48.2K</div></div>
+        <div class="stat-card"><div class="stat-label">DB Size</div><div class="stat-value">2.4 GB</div></div>
+        <div class="stat-card"><div class="stat-label">Last Backup</div><div class="stat-value" style="font-size:18px;">6h ago</div></div>
+        <div class="stat-card"><div class="stat-label">DB Health</div><div class="stat-value" style="color:var(--success);">Good</div></div>
+      </div>
+
+      <div class="row" style="margin-bottom:20px;">
+        <div class="col">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Database Tables</div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Table</th><th>Records</th><th>Size</th><th>Last Modified</th></tr></thead>
+                <tbody>
+                  <tr><td>students</td><td>1,248</td><td>12.4 MB</td><td>Today 9:41 AM</td></tr>
+                  <tr><td>employees</td><td>187</td><td>3.2 MB</td><td>Today 8:00 AM</td></tr>
+                  <tr><td>attendance_logs</td><td>32,840</td><td>180 MB</td><td>Today 9:41 AM</td></tr>
+                  <tr><td>leave_requests</td><td>842</td><td>8.1 MB</td><td>Today 9:32 AM</td></tr>
+                  <tr><td>sms_logs</td><td>10,280</td><td>42 MB</td><td>Today 9:35 AM</td></tr>
+                  <tr><td>inventory</td><td>248</td><td>4.8 MB</td><td>Today 7:00 AM</td></tr>
+                  <tr><td>canteen_orders</td><td>2,840</td><td>22 MB</td><td>Today 9:00 AM</td></tr>
+                  <tr><td>geo_events</td><td>980</td><td>18 MB</td><td>Today 9:20 AM</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-title" style="margin-bottom:14px;">Quick Export</div>
+            <div class="form-group"><label class="form-label">Select Dataset</label>
+              <select class="form-control"><option>Students — Full</option><option>Attendance — This Month</option><option>Leave Records</option><option>SMS Logs</option><option>Inventory</option></select>
+            </div>
+            <div class="form-group"><label class="form-label">Format</label>
+              <select class="form-control"><option>CSV</option><option>Excel (.xlsx)</option><option>PDF Report</option></select>
+            </div>
+            <button class="btn btn-primary">↓ Export Data</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px;">System Health</div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>CPU Usage</span><span style="font-weight:600;">28%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:28%;background:#16a34a;"></div></div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>RAM Usage</span><span style="font-weight:600;">61%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:61%;background:#d97706;"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Disk Usage</span><span style="font-weight:600;">44%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width:44%;background:#1a56db;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
 
 <script>
-/* ---------------- NAVIGATION ---------------- */
-const navItems = document.querySelectorAll('.nav-item');
-const pages = document.querySelectorAll('.page');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
+  // Panel navigation
+  const panels = { dashboard: 'Dashboard', students: 'Students', employees: 'Employees', attendance: 'Attendance', biometric: 'Biometric & Geo-fencing', canteen: 'Canteen & Food', inventory: 'Inventory', leave: 'Leave & Outpass', messages: 'Parent Alerts', database: 'Database' };
 
-function goPage(name){
-  pages.forEach(p => p.classList.remove('active'));
-  navItems.forEach(n => n.classList.remove('active'));
-  const target = document.getElementById('page-' + name);
-  if(target) target.classList.add('active');
-  const navBtn = document.querySelector(`.nav-item[data-page="${name}"]`);
-  if(navBtn) navBtn.classList.add('active');
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-navItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const page = item.getAttribute('data-page');
-    goPage(page);
-  });
-});
-
-document.getElementById('menuToggle').addEventListener('click', () => {
-  sidebar.classList.toggle('open');
-  overlay.classList.toggle('show');
-});
-overlay.addEventListener('click', () => {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-});
-
-/* ---------------- LIVE CLOCK ---------------- */
-function updateClock(){
-  const now = new Date();
-  let h = now.getHours();
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  h = h % 12; if(h === 0) h = 12;
-  document.getElementById('clockTime').textContent = `${h}:${m}:${s} ${ampm}`;
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('clockDate').textContent =
-    `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-/* ---------------- CIRCULATION BAR CHART ---------------- */
-const circulationData = [
-  {issued: 15, returned: 8},
-  {issued: 30, returned: 26},
-  {issued: 9, returned: 5},
-  {issued: 34, returned: 24},
-  {issued: 6, returned: 4},
-  {issued: 26, returned: 10},
-  {issued: 12, returned: 18},
-];
-(function drawBars(){
-  const g = document.getElementById('circulation-bars');
-  const max = 38;
-  const chartTop = 10, chartBottom = 190, chartHeight = chartBottom - chartTop;
-  const groupWidth = (540-30)/circulationData.length;
-  const barWidth = 16;
-  circulationData.forEach((d,i)=>{
-    const gx = 30 + i*groupWidth + groupWidth/2;
-    const issuedH = (d.issued/max)*chartHeight;
-    const returnedH = (d.returned/max)*chartHeight;
-    const b1 = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    b1.setAttribute('x', gx-barWidth-2);
-    b1.setAttribute('y', chartBottom-issuedH);
-    b1.setAttribute('width', barWidth);
-    b1.setAttribute('height', issuedH);
-    b1.setAttribute('rx', 4);
-    b1.setAttribute('fill', '#3454d1');
-    g.appendChild(b1);
-    const b2 = document.createElementNS('http://www.w3.org/2000/svg','rect');
-    b2.setAttribute('x', gx+2);
-    b2.setAttribute('y', chartBottom-returnedH);
-    b2.setAttribute('width', barWidth);
-    b2.setAttribute('height', returnedH);
-    b2.setAttribute('rx', 4);
-    b2.setAttribute('fill', '#14b8a6');
-    g.appendChild(b2);
-  });
-})();
-
-/* ---------------- DONUT CHART ---------------- */
-const donutData = [
-  {label:'Fiction', value:32, color:'#3454d1'},
-  {label:'Academic', value:28, color:'#14b8a6'},
-  {label:'Reference', value:22, color:'#8b5cf6'},
-  {label:'Children', value:18, color:'#dc2626'},
-];
-(function drawDonut(){
-  const svg = document.getElementById('donut-svg');
-  const legend = document.getElementById('donut-legend');
-  let offset = 0;
-  const circumference = 2 * Math.PI * 15.9;
-  donutData.forEach(d=>{
-    const dash = (d.value/100)*circumference;
-    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',21); circle.setAttribute('cy',21); circle.setAttribute('r',15.9);
-    circle.setAttribute('fill','transparent');
-    circle.setAttribute('stroke', d.color);
-    circle.setAttribute('stroke-width', 6);
-    circle.setAttribute('stroke-dasharray', `${dash} ${circumference-dash}`);
-    circle.setAttribute('stroke-dashoffset', -offset);
-    circle.setAttribute('transform','rotate(-90 21 21)');
-    svg.appendChild(circle);
-    offset += dash;
-
-    const row = document.createElement('div');
-    row.className = 'row';
-    row.innerHTML = `<i style="background:${d.color}"></i>${d.label}<b>${d.value}%</b>`;
-    legend.appendChild(row);
-  });
-})();
-
-/* ---------------- STUDENT LIST DUMMY DATA ---------------- */
-const students = [
-  {name:'Priya Sahoo', roll:'CSE-2024-041', seat:12, phone:'98xxxxxx21', joined:'12-Jan-2025', status:'Active'},
-  {name:'Rahul Nayak', roll:'ECE-2023-018', seat:45, phone:'91xxxxxx08', joined:'03-Aug-2024', status:'Active'},
-  {name:'Ananya Mishra', roll:'MEC-2024-067', seat:2, phone:'87xxxxxx55', joined:'19-Feb-2025', status:'Inactive'},
-  {name:'Debasish Behera', roll:'CSE-2022-091', seat:71, phone:'99xxxxxx14', joined:'27-Nov-2023', status:'Active'},
-  {name:'Sneha Patra', roll:'CIV-2024-033', seat:1, phone:'80xxxxxx77', joined:'05-May-2025', status:'Active'},
-  {name:'Aditya Rout', roll:'EEE-2023-050', seat:8, phone:'95xxxxxx63', joined:'22-Jul-2024', status:'Inactive'},
-  {name:'Ishika Jena', roll:'CSE-2024-102', seat:23, phone:'76xxxxxx40', joined:'10-Mar-2025', status:'Active'},
-];
-(function fillTable(){
-  const body = document.getElementById('student-table-body');
-  students.forEach(s=>{
-    const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><div class="name-cell"><div class="mini-avatar">${initials}</div>${s.name}</div></td>
-      <td>${s.roll}</td>
-      <td>${s.seat}</td>
-      <td>${s.phone}</td>
-      <td>${s.joined}</td>
-      <td><span class="pill ${s.status.toLowerCase()}">${s.status}</span></td>
-    `;
-    body.appendChild(tr);
-  });
-})();
-
-/* ---------------- SEAT GRID (100 seats) ---------------- */
-function renderSeats(){
-  const grid = document.getElementById('seat-grid');
-  grid.innerHTML = '';
-  const activeSeats = [1,2];
-  const dueSoonSeats = [23];
-  for(let i=1;i<=100;i++){
-    const div = document.createElement('div');
-    let cls = 'seat';
-    let dot = '';
-    if(activeSeats.includes(i)){ cls += ' active'; dot = '<span class="dot2"></span>'; }
-    else if(dueSoonSeats.includes(i)){ cls += ' duesoon'; dot = '<span class="dot2"></span>'; }
-    div.className = cls;
-    div.innerHTML = String(i).padStart(2,'0') + dot;
-    grid.appendChild(div);
+  function showPanel(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    if (el) el.classList.add('active');
+    document.getElementById('headerTitle').textContent = panels[id] || id;
+    document.getElementById('notifPopup').classList.remove('open');
+    window.scrollTo(0, 0);
   }
-}
-renderSeats();
-document.getElementById('refreshSeats').addEventListener('click', renderSeats);
+
+  // Notification toggle
+  function toggleNotif() {
+    document.getElementById('notifPopup').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.notif-btn') && !e.target.closest('.notification-popup')) {
+      document.getElementById('notifPopup').classList.remove('open');
+    }
+  });
+
+  // SMS send simulation
+  function sendSMS() {
+    const btn = event.target;
+    btn.textContent = '✓ Sent!';
+    btn.style.background = '#16a34a';
+    setTimeout(() => { btn.textContent = '📱 Send SMS'; btn.style.background = ''; }, 2000);
+  }
+
+  function sendAllAlert() {
+    const btn = event.target.closest('.btn');
+    btn.textContent = '✓ 108 SMS Sent';
+    btn.style.background = '#16a34a'; btn.style.color = '#fff'; btn.style.borderColor = '#16a34a';
+    setTimeout(() => { btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.61 3.47 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>SMS Alert'; btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }, 2500);
+  }
+
+  function simulateScan() {
+    const finger = document.getElementById('bioFinger');
+    const statusEl = document.getElementById('bioStatus');
+    const mealSelect = document.getElementById('bioMealType');
+    const log = document.getElementById('bioLog');
+    if (!finger || !statusEl || !mealSelect || !log) return;
+
+    finger.classList.add('scanning');
+    statusEl.textContent = 'Scanning fingerprint…';
+    statusEl.className = 'bio-status';
+
+    setTimeout(() => {
+      finger.classList.remove('scanning');
+      const meal = mealSelect.value;
+      const now = new Date();
+      statusEl.textContent = `✓ ${meal.charAt(0).toUpperCase() + meal.slice(1)} scan complete`;
+      statusEl.className = 'bio-status success';
+      addBioLogEntry({ first: 'Student', last: 'Scan' }, meal, now, true);
+    }, 900);
+  }
+
+  function addBioLogEntry(student, meal, time, granted) {
+    const log = document.getElementById('bioLog');
+    if (!log) return;
+    if (log.querySelector('div[style]')) log.innerHTML = '';
+    const entry = document.createElement('div');
+    entry.className = 'bio-log-entry';
+    entry.innerHTML = `
+      <span class="name">${student.first} ${student.last}</span>
+      <span class="meal">${meal}</span>
+      <span class="time">${fmtTime(time)}</span>
+      <span style="color:${granted ? '#4ade80' : '#f87171'};font-size:.7rem;font-weight:700">${granted ? '✓' : '✗'}</span>
+    `;
+    log.insertBefore(entry, log.firstChild);
+  }
+
+  function fmtTime(time) {
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Leave approval
+  function approveLeave(btn) {
+    const row = btn.closest('tr');
+    row.cells[5].innerHTML = '<span class="badge success">Approved</span>';
+    btn.parentElement.innerHTML = '<span class="badge success">✓ Approved</span>';
+  }
+  function rejectLeave(btn) {
+    const row = btn.closest('tr');
+    row.cells[5].innerHTML = '<span class="badge danger">Rejected</span>';
+    btn.parentElement.innerHTML = '<span class="badge danger">✗ Rejected</span>';
+  }
+
+  // Food calculator
+  const foodData = {
+    lunch: [
+      { name: 'Rice', unit: 'kg', perHead: 0.4 },
+      { name: 'Sambar/Dal', unit: 'L', perHead: 0.33 },
+      { name: 'Chapati', unit: 'pcs', perHead: 0.25 },
+      { name: 'Vegetable Sabzi', unit: 'kg', perHead: 0.15 },
+      { name: 'Curd/Buttermilk', unit: 'L', perHead: 0.2 },
+    ],
+    breakfast: [
+      { name: 'Idli/Vada', unit: 'pcs', perHead: 4 },
+      { name: 'Upma', unit: 'kg', perHead: 0.3 },
+      { name: 'Chutney', unit: 'kg', perHead: 0.08 },
+      { name: 'Tea/Coffee', unit: 'L', perHead: 0.25 },
+    ],
+    dinner: [
+      { name: 'Rice', unit: 'kg', perHead: 0.35 },
+      { name: 'Dal Fry', unit: 'L', perHead: 0.3 },
+      { name: 'Chapati', unit: 'pcs', perHead: 3 },
+      { name: 'Dessert (Kheer)', unit: 'L', perHead: 0.18 },
+    ]
+  };
+
+  function calcFood() {
+    const students = parseInt(document.getElementById('studentCount').value) || 0;
+    const staff = parseInt(document.getElementById('staffCount').value) || 0;
+    const meal = document.getElementById('mealType').value;
+    const total = students + staff;
+    const items = foodData[meal];
+    let html = '';
+    items.forEach(item => {
+      const qty = (total * item.perHead).toFixed(1);
+      html += `<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span>${item.name}</span>
+        <span style="font-weight:600;">${qty} ${item.unit}</span>
+      </div>`;
+    });
+    html += `<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">For ${total.toLocaleString()} people (${students} students + ${staff} staff) · +5% buffer recommended</div>`;
+    document.getElementById('calcItems').innerHTML = html;
+  }
+  calcFood();
+   const scanner = document.querySelector(".bio-finger");
+scanner.addEventListener("click", () => {
+    scanner.classList.remove("success");
+    setTimeout(() => { scanner.classList.add("success"); }, 2500);
+});
 </script>
 </body>
 </html>
